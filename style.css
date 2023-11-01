@@ -7,6 +7,8 @@
     --persian-red: #C8342F;
     --jet: #333;
 
+    --pear-6: #b9cd3799;
+
     --board-dimension: 600px;
     --square-dimension: calc(var(--board-dimension) / 8);
 }
@@ -76,6 +78,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: var(--aspargus);
 }
 
 .square {
@@ -89,4 +92,30 @@ body {
 
 .square.light {
     background-color: var(--beige);
+}
+
+.piece {
+    position: absolute;
+    width: var(--square-dimension);
+    height: var(--square-dimension);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3.6rem;
+    cursor: pointer;
+    transition: top 0.3s, left 0.3s;
+}
+
+.piece.active {
+    background-color: var(--pear-6);
+    border: 5px solid var(--pear)
+}
+
+.piece.white {
+    color: white;
+    text-shadow: 0 0 5px rgba(0, 0, 0, 0.6);
+}
+
+.piece.black {
+    color: black;
 }
