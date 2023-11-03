@@ -39,7 +39,7 @@ const initialSquare = (color, pieceName) => {
             break;
 
         case "rook1":
-            square = color === "white" ? "a1" : "a8"
+            square = color === "white" ? "e4" : "a8"
             break;
 
         case "rook2":

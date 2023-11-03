@@ -8,6 +8,7 @@
     --jet: #333;
 
     --pear-6: #b9cd3799;
+    --persian-red-6: #C8342F99;
 
     --board-dimension: 600px;
     --square-dimension: calc(var(--board-dimension) / 8);
@@ -118,4 +119,24 @@ body {
 
 .piece.black {
     color: black;
+}
+
+.move {
+    position: absolute;
+    width: var(--square-dimension);
+    height: var(--square-dimension);
+    border: 5px solid var(--pear);
+    cursor: pointer;
+}
+
+.move:hover {    
+    background-color: var(--pear-6);
+}
+
+.move.capture {
+    border-color: var(--persian-red);
+}
+
+.move.capture:hover {
+    background-color: var(--persian-red-6);
 }
