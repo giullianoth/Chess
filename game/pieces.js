@@ -39,7 +39,7 @@ const initialSquare = (color, pieceName) => {
             break;
 
         case "rook1":
-            square = color === "white" ? "e4" : "a8"
+            square = color === "white" ? "a1" : "a8"
             break;
 
         case "rook2":
@@ -55,7 +55,7 @@ const initialSquare = (color, pieceName) => {
             break;
 
         case "bishop1":
-            square = color === "white" ? "c1" : "c8"
+            square = color === "white" ? "f4" : "c8"
             break;
 
         case "bishop2":
