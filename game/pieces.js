@@ -63,11 +63,11 @@ const initialSquare = (color, pieceName) => {
             break;
 
         case "queen":
-            square = color === "white" ? "e4" : "d8"
+            square = color === "white" ? "d1" : "d8"
             break;
 
         case "king":
-            square = color === "white" ? "e1" : "e8"
+            square = color === "white" ? "e4" : "e8"
             break;
     }
 
