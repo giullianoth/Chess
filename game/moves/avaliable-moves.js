@@ -1,5 +1,6 @@
 import { getPieceType } from "../variables.js"
 import BishopMove from "./bishop-move.js";
+import QueenMove from "./queen-move.js";
 import RookMove from "./rook-move.js";
 
 export function AvaliableMoves(piece) {
@@ -13,6 +14,10 @@ export function AvaliableMoves(piece) {
 
         case "bishop":
             squares = BishopMove(piece)
+            break;
+
+        case "queen":
+            squares = QueenMove(piece)
             break;
     }
 
