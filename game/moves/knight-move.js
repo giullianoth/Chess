@@ -1,5 +1,5 @@
 import { columns, getSquare, ranks } from "../variables.js";
-import { getAllMoves, getCaptures, getMoves } from "./move-squares.js";
+import { getCaptures, getMoves } from "./move-squares.js";
 
 export const knightColumns1 = (column) =>
     columns.filter((c, i) => i === columns.indexOf(column) || i === columns.indexOf(column) - 1 || i === columns.indexOf(column) + 1)

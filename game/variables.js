@@ -47,6 +47,7 @@ export const squareHasPiece = (square) => getPieces().some(piece => getSquare(pi
 
 // PIECES
 export const getPieces = () => normalArray(getElements(".piece"))
+export const getPiecesByColor = (color) => getPieces().filter(piece => getColor(piece) === color)
 
 // GAME OPERATIONS
 export const setSquare = (element, square) => element.setAttribute("data-square", square)
@@ -58,8 +59,10 @@ export const setMove = (element, move) => element.setAttribute("data-move", move
 export const getColor = (element) => element.dataset.color
 export const getPieceType = (piece) => piece.dataset.type
 export const getSquare = (element) => element.dataset.square
+export const getPieceMove = (piece) => parseInt(piece.dataset.move)
 
 export const getPieceBySquare = (square) => getPieces().find(piece => getSquare(piece) === square)
+export const isFirstMove = (piece) => getPieceMove(piece) === 0
 
 // GAME FEATURES
 export var turn = "white"

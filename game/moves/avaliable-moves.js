@@ -2,6 +2,7 @@ import { getPieceType } from "../variables.js"
 import BishopMove from "./bishop-move.js";
 import KingMove from "./king-move.js";
 import KnightMove from "./knight-move.js";
+import PawnMove from "./pawn-move.js";
 import QueenMove from "./queen-move.js";
 import RookMove from "./rook-move.js";
 
@@ -28,6 +29,10 @@ export function AvaliableMoves(piece) {
 
         case "knight":
             squares = KnightMove(piece)
+            break;
+
+        case "pawn":
+            squares = PawnMove(piece)
             break;
     }
 
