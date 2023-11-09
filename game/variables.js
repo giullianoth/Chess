@@ -28,7 +28,7 @@ export const boardDimension = () => board.offsetWidth || board.offsetHeight
 
 // SQUARES AND COORDINATES
 export const getSquares = () => normalArray(getElements(".square"))
-export const getMoveSquares = () => normalArray(getElements(".move"))
+export const getMoveSquares = () => normalArray(getElements(".move")) ?? []
 export const columns = ["a", "b", "c", "d", "e", "f", "g", "h"]
 export const ranks = ["1", "2", "3", "4", "5", "6", "7", "8"].reverse()
 export const squareDimension = () => boardDimension() / 8
@@ -66,3 +66,16 @@ export const isFirstMove = (piece) => getPieceMove(piece) === 0
 
 // GAME FEATURES
 export var turn = "white"
+export const swapTurn = () => turn = turn === "white" ? "black" : "white"
+
+export const movePiece = (piece, square) => {
+    let { top, left } = getCoordinateBySquare(square)
+    setSquare(piece, square)
+    setMove(piece, getPieceMove(piece) + 1)
+    setStyle(piece, "top", `${top}px`)
+    setStyle(piece, "left", `${left}px`)
+}
+
+export const capturePiece = (piece) => {
+    piece.remove()
+}

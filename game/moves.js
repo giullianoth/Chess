@@ -1,11 +1,9 @@
 import { AvaliableMoves } from "./moves/avaliable-moves.js";
-import { addClass, board, getColor, getCoordinateBySquare, getMoveSquares, getPieces, hasClass, removeClass, setSquare, setStyle, toggleClass, turn } from "./variables.js";
-
-{/* <div class="move capture" style="top: 225px; left: 300px;"></div> */ }
+import { addClass, board, capturePiece, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieces, getSquare, hasClass, movePiece, removeClass, setSquare, setStyle, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
 
 const moveSquareElement = (square) => {
     let element = document.createElement("div")
-    let {top, left} = getCoordinateBySquare(square)
+    let { top, left } = getCoordinateBySquare(square)
     element.className = "move"
     setSquare(element, square)
     setStyle(element, "top", `${top}px`)
@@ -20,9 +18,8 @@ const captureSquareElement = (square) => {
     return element
 }
 
-function selectPiece(piece) {
+function insertMoveSquares(piece) {
     let { moves, captures } = AvaliableMoves(piece)
-    addClass(piece, "active")
 
     if (moves) {
         moves.forEach(square => board.append(moveSquareElement(square)))
@@ -31,6 +28,11 @@ function selectPiece(piece) {
     if (captures) {
         captures.forEach(square => board.append(captureSquareElement(square)))
     }
+}
+
+function selectPiece(piece) {
+    addClass(piece, "active")
+    insertMoveSquares(piece)
 }
 
 function defineMove(piece) {
@@ -43,6 +45,17 @@ function defineMove(piece) {
     })
 
     toggleClass(piece, "fixed")
+
+    getMoveSquares().forEach(square => square.remove())
+    insertMoveSquares(piece)
+
+    getMoveSquares().forEach(square => {
+        if (hasClass(piece, "fixed")) {
+            addClass(square, "fixed")
+        }
+
+        square.addEventListener("click", ({ target }) => move(piece, target))
+    })
 }
 
 function disselectPiece(piece) {
@@ -51,8 +64,24 @@ function disselectPiece(piece) {
     }
 
     if (getMoveSquares()) {
-        getMoveSquares().forEach(square => square.remove())
+        getMoveSquares().forEach(square => !hasClass(square, "fixed") && square.remove())
     }
+}
+
+export function move(piece, moveSquare) {
+    removeClass(piece, "fixed")
+    removeClass(piece, "active")
+    getMoveSquares().forEach(s => s.remove())
+    
+    let square = getSquare(moveSquare)
+
+    if (squareHasPiece(square)) {
+        let capturedPiece = getPieceBySquare(square)
+        capturePiece(capturedPiece)
+    }
+
+    movePiece(piece, square)
+    swapTurn()
 }
 
 export default function Moves() {
