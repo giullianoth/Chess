@@ -70,6 +70,11 @@ export const isFirstMove = (piece) => getPieceMove(piece) === 0
 export var turn = "white"
 export const swapTurn = () => turn = turn === "white" ? "black" : "white"
 
+export var round = 1
+export var roundPerMove = 1
+export const incrementRound = () => round += 1
+export const incrementRoundPerMove = () => roundPerMove += 1
+
 export const isCastle = (piece, square) => getPieceType(piece) === "king" && isFirstMove(piece) && hasClass(findSquare(square), "castle")
 
 export const isPromotion = (piece, rank) => getPieceType(piece) === "pawn" &&
@@ -89,3 +94,5 @@ export const movePiece = (piece, square) => {
 export const capturePiece = (piece) => {
     piece.remove()
 }
+
+export const gameHistory = []

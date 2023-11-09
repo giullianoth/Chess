@@ -1,5 +1,5 @@
 import { AvaliableMoves } from "./moves/avaliable-moves.js";
-import { addClass, board, capturePiece, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceName, getPieceType, getPieces, getSquare, hasClass, isCastle, isFirstMove, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, setName, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
+import { addClass, board, capturePiece, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceName, getPieceType, getPieces, getSquare, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setName, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
 
 const moveSquareElement = (square) => {
     let element = document.createElement("div")
@@ -104,17 +104,20 @@ function disselectPiece(piece) {
     }
 }
 
-export function move(piece, moveSquare) {
+function move(piece, moveSquare) {
     removeClass(piece, "fixed")
     removeClass(piece, "active")
     getMoveSquares().forEach(s => s.remove())
 
     let square = getSquare(moveSquare)
+    let castleRook = null
+    let capturedPiece = null
+    let castleSquare = null
 
     if (isCastle(piece, square)) {
         let [c, r] = square.split("")
-        let castleSquare = (c === "c" ? "d" : "f") + r
-        let castleRook = getPieceBySquare((c === "c" ? "a" : "h") + r)
+        castleSquare = (c === "c" ? "d" : "f") + r
+        castleRook = getPieceBySquare((c === "c" ? "a" : "h") + r)
 
         if (castleRook && getPieceType(castleRook) === "rook" && isFirstMove(castleRook)) {
             movePiece(castleRook, castleSquare)
@@ -122,12 +125,30 @@ export function move(piece, moveSquare) {
     }
 
     if (squareHasPiece(square)) {
-        let capturedPiece = getPieceBySquare(square)
+        capturedPiece = getPieceBySquare(square)
         capturePiece(capturedPiece)
     }
 
+    gameHistory.push({
+        round: round,
+        round_per_move: roundPerMove,
+        piece: piece,
+        piece_name: getPieceName(piece),
+        color: getColor(piece),
+        square_origin: getSquare(piece),
+        square_destination: square,
+        captured_piece: capturedPiece,
+        castle_piece: castleRook,
+        castle_square: castleSquare
+    })
+
     movePiece(piece, square)
+
     swapTurn()
+    incrementRoundPerMove()
+    getColor(piece) === "black" && incrementRound()
+
+    console.log(gameHistory);
 }
 
 export default function Moves() {
