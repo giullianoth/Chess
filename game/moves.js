@@ -1,5 +1,5 @@
 import { AvaliableMoves } from "./moves/avaliable-moves.js";
-import { addClass, board, capturePiece, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceType, getPieces, getSquare, hasClass, isCastle, isFirstMove, movePiece, removeClass, setSquare, setStyle, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
+import { addClass, board, capturePiece, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceName, getPieceType, getPieces, getSquare, hasClass, isCastle, isFirstMove, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, setName, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
 
 const moveSquareElement = (square) => {
     let element = document.createElement("div")
@@ -18,6 +18,21 @@ const captureSquareElement = (square) => {
     return element
 }
 
+const promotionElement = (color) => {
+    let element = document.createElement("div")
+    element.className = "promotion"
+    setStyle(element, (color === "white" ? "top" : "bottom"), 0)
+
+    element.innerHTML = `
+        <i class="fa-solid fa-chess-knight piece ${color}" data-type="knight"></i>
+        <i class="fa-solid fa-chess-bishop piece ${color}" data-type="bishop"></i>
+        <i class="fa-solid fa-chess-rook piece ${color}" data-type="rook"></i>
+        <i class="fa-solid fa-chess-queen piece ${color}" data-type="queen"></i>
+    `
+
+    return element
+}
+
 function insertMoveSquares(piece) {
     let { moves, captures } = AvaliableMoves(piece)
 
@@ -28,6 +43,20 @@ function insertMoveSquares(piece) {
     if (captures) {
         captures.forEach(square => board.append(captureSquareElement(square)))
     }
+}
+
+function promotion(piece, moveSquare) {
+    board.append(promotionElement(getColor(piece)))
+
+    promotionOptions().forEach(opt => {
+        opt.addEventListener("click", ({ target }) => {
+            replaceClass(piece, "fa-chess-pawn", `fa-chess-${getPieceType(target)}`)
+            setType(piece, getPieceType(target))
+            setName(piece, `${getPieceName(piece)}-promoted-to-${getPieceType(target)}`)
+            promotionList().remove()
+            move(piece, moveSquare)
+        })
+    })
 }
 
 function selectPiece(piece) {
@@ -54,7 +83,14 @@ function defineMove(piece) {
             addClass(square, "fixed")
         }
 
-        square.addEventListener("click", ({ target }) => move(piece, target))
+        square.addEventListener("click", ({ target }) => {
+            let [c, r] = getSquare(target).split("")
+            if (isPromotion(piece, r)) {
+                promotion(piece, target)
+            } else {
+                move(piece, target)
+            }
+        })
     })
 }
 
@@ -72,7 +108,7 @@ export function move(piece, moveSquare) {
     removeClass(piece, "fixed")
     removeClass(piece, "active")
     getMoveSquares().forEach(s => s.remove())
-    
+
     let square = getSquare(moveSquare)
 
     if (isCastle(piece, square)) {

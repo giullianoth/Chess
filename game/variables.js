@@ -59,6 +59,7 @@ export const setMove = (element, move) => element.setAttribute("data-move", move
 
 export const getColor = (element) => element.dataset.color
 export const getPieceType = (piece) => piece.dataset.type
+export const getPieceName = (piece) => piece.dataset.name
 export const getSquare = (element) => element.dataset.square
 export const getPieceMove = (piece) => parseInt(piece.dataset.move)
 
@@ -70,6 +71,12 @@ export var turn = "white"
 export const swapTurn = () => turn = turn === "white" ? "black" : "white"
 
 export const isCastle = (piece, square) => getPieceType(piece) === "king" && isFirstMove(piece) && hasClass(findSquare(square), "castle")
+
+export const isPromotion = (piece, rank) => getPieceType(piece) === "pawn" &&
+    ((getColor(piece) === "white" && rank === "8") || (getColor(piece) === "black" && rank === "1"))
+
+export const promotionList = () => getElement(".promotion")
+export const promotionOptions = () => getElements(".piece", promotionList())
 
 export const movePiece = (piece, square) => {
     let { top, left } = getCoordinateBySquare(square)

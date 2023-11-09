@@ -140,3 +140,22 @@ body {
 .move.capture:hover {
     background-color: var(--persian-red-6);
 }
+
+.promotion {
+    position: absolute;
+    left: 0;
+    width: 100%;
+    background-color: var(--ivory);
+    z-index: 10;
+    display: flex;
+    justify-content: space-evenly;
+    border: 2px solid var(--aspargus);
+}
+
+.promotion .piece {
+    position: initial;
+}
+
+.promotion .piece:hover {
+    background-color: var(--icterine);
+}
