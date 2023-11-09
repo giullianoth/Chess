@@ -1,5 +1,5 @@
 import { AvaliableMoves } from "./moves/avaliable-moves.js";
-import { addClass, board, capturePiece, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieces, getSquare, hasClass, movePiece, removeClass, setSquare, setStyle, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
+import { addClass, board, capturePiece, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceType, getPieces, getSquare, hasClass, isCastle, isFirstMove, movePiece, removeClass, setSquare, setStyle, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
 
 const moveSquareElement = (square) => {
     let element = document.createElement("div")
@@ -74,6 +74,16 @@ export function move(piece, moveSquare) {
     getMoveSquares().forEach(s => s.remove())
     
     let square = getSquare(moveSquare)
+
+    if (isCastle(piece, square)) {
+        let [c, r] = square.split("")
+        let castleSquare = (c === "c" ? "d" : "f") + r
+        let castleRook = getPieceBySquare((c === "c" ? "a" : "h") + r)
+
+        if (castleRook && getPieceType(castleRook) === "rook" && isFirstMove(castleRook)) {
+            movePiece(castleRook, castleSquare)
+        }
+    }
 
     if (squareHasPiece(square)) {
         let capturedPiece = getPieceBySquare(square)

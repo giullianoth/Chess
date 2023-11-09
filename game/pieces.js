@@ -7,7 +7,7 @@ const initialSquare = (color, pieceName) => {
 
     switch (pieceName) {
         case "pawn1":
-            square = color === "white" ? "a2" : "a7"
+            square = color === "white" ? "a7" : "a2"
             break;
 
         case "pawn2":
@@ -39,7 +39,7 @@ const initialSquare = (color, pieceName) => {
             break;
 
         case "rook1":
-            square = color === "white" ? "a1" : "a8"
+            square = color === "white" ? "b3" : "b6"
             break;
 
         case "rook2":
