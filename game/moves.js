@@ -1,5 +1,5 @@
 import { AvaliableMoves } from "./moves/avaliable-moves.js";
-import { addClass, board, capturePiece, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceName, getPieceType, getPieces, getSquare, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setName, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
+import { addClass, board, capturePiece, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceMove, getPieceName, getPieceType, getPieces, getSquare, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setName, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn, unsetPassant } from "./variables.js";
 
 const moveSquareElement = (square) => {
     let element = document.createElement("div")
@@ -66,6 +66,8 @@ function selectPiece(piece) {
 
 function defineMove(piece) {
 
+    unsetPassant()
+
     getPieces().forEach(p => {
         if (p !== piece) {
             removeClass(p, "fixed")
@@ -111,8 +113,8 @@ function move(piece, moveSquare) {
 
     let square = getSquare(moveSquare)
     let castleRook = null
-    let capturedPiece = null
     let castleSquare = null
+    let capturedPiece = null
 
     if (isCastle(piece, square)) {
         let [c, r] = square.split("")
@@ -129,10 +131,15 @@ function move(piece, moveSquare) {
         capturePiece(capturedPiece)
     }
 
+    if (isPassant) {
+        console.log(gameHistory[roundPerMove - 2]);
+    }
+
     gameHistory.push({
-        round: round,
-        round_per_move: roundPerMove,
-        piece: piece,
+        last_round: round,
+        last_round_per_move: roundPerMove,
+        moved_piece: piece,
+        piece_move: getPieceMove(piece) + 1,
         piece_name: getPieceName(piece),
         color: getColor(piece),
         square_origin: getSquare(piece),
@@ -147,8 +154,6 @@ function move(piece, moveSquare) {
     swapTurn()
     incrementRoundPerMove()
     getColor(piece) === "black" && incrementRound()
-
-    console.log(gameHistory);
 }
 
 export default function Moves() {

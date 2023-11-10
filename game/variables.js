@@ -83,6 +83,10 @@ export const isPromotion = (piece, rank) => getPieceType(piece) === "pawn" &&
 export const promotionList = () => getElement(".promotion")
 export const promotionOptions = () => getElements(".piece", promotionList())
 
+export var isPassant = false
+export const setPassant = () => isPassant = true
+export const unsetPassant = () => isPassant = false
+
 export const movePiece = (piece, square) => {
     let { top, left } = getCoordinateBySquare(square)
     setSquare(piece, square)
