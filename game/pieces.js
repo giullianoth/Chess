@@ -19,7 +19,7 @@ const initialSquare = (color, pieceName) => {
             break;
 
         case "pawn4":
-            square = color === "white" ? "d2" : "d4"
+            square = color === "white" ? "d2" : "d7"
             break;
 
         case "pawn5":
@@ -43,7 +43,7 @@ const initialSquare = (color, pieceName) => {
             break;
 
         case "rook2":
-            square = color === "white" ? "h1" : "h8"
+            square = color === "white" ? "h4" : "h8"
             break;
 
         case "knight1":
@@ -67,7 +67,7 @@ const initialSquare = (color, pieceName) => {
             break;
 
         case "king":
-            square = color === "white" ? "e1" : "e8"
+            square = color === "white" ? "e1" : "d6"
             break;
     }
 

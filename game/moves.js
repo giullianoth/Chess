@@ -1,4 +1,5 @@
 import { AvaliableMoves } from "./moves/avaliable-moves.js";
+import { AvaliablePin } from "./safe-moves/avaliable-pin.js";
 import { addClass, board, capturePiece, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceMove, getPieceName, getPieceType, getPieces, getSquare, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setName, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn, unsetPassant } from "./variables.js";
 
 const moveSquareElement = (square) => {
@@ -35,6 +36,8 @@ const promotionElement = (color) => {
 
 function insertMoveSquares(piece) {
     let { moves, captures } = AvaliableMoves(piece)
+
+    console.log(AvaliablePin(piece));
 
     if (moves) {
         moves.forEach(square => board.append(moveSquareElement(square)))
@@ -132,7 +135,8 @@ function move(piece, moveSquare) {
     }
 
     if (isPassant) {
-        console.log(gameHistory[roundPerMove - 2]);
+        capturedPiece = getPieces().find(p => p === gameHistory[roundPerMove - 2].moved_piece)
+        capturePiece(capturedPiece)
     }
 
     gameHistory.push({

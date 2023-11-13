@@ -95,8 +95,6 @@ export const movePiece = (piece, square) => {
     setStyle(piece, "left", `${left}px`)
 }
 
-export const capturePiece = (piece) => {
-    piece.remove()
-}
+export const capturePiece = (piece) => piece.remove()
 
 export const gameHistory = []
