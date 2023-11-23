@@ -121,6 +121,10 @@ body {
     color: black;
 }
 
+.piece.check {
+    background-color: red;
+}
+
 .move {
     position: absolute;
     width: var(--square-dimension);

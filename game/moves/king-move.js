@@ -1,34 +1,36 @@
-import { columns, getPieceBySquare, getPieceType, getSquare, isFirstMove, ranks, squareHasPiece } from "../variables.js"
+import { check, columns, getPieceBySquare, getPieceType, getSquare, isFirstMove, ranks, squareHasPiece } from "../variables.js"
 import { getCaptures, getMoves } from "./move-squares.js"
 
 export const kingColumns = (column, rank, piece) => {
     let castleQueenside = false
     let castleKingside = false
 
-    for (let index = columns.indexOf(column) + 1; index < columns.length; index++) {
-        if (squareHasPiece(columns[index] + rank)) {
-            let pieceCastle = getPieceBySquare(columns[index] + rank)
-
-            if (getPieceType(pieceCastle) === "rook") {
-                if (isFirstMove(piece) && isFirstMove(pieceCastle)) {
-                    castleKingside = true
+    if (!check) {
+        for (let index = columns.indexOf(column) + 1; index < columns.length; index++) {
+            if (squareHasPiece(columns[index] + rank)) {
+                let pieceCastle = getPieceBySquare(columns[index] + rank)
+    
+                if (getPieceType(pieceCastle) === "rook") {
+                    if (isFirstMove(piece) && isFirstMove(pieceCastle)) {
+                        castleKingside = true
+                    }
+                } else {
+                    break
                 }
-            } else {
-                break
             }
         }
-    }
-
-    for (let index = columns.indexOf(column) - 1; index >= 0; index--) {
-        if (squareHasPiece(columns[index] + rank)) {
-            let pieceCastle = getPieceBySquare(columns[index] + rank)
-
-            if (getPieceType(pieceCastle) === "rook") {
-                if (isFirstMove(piece) && isFirstMove(pieceCastle)) {
-                    castleQueenside = true
+    
+        for (let index = columns.indexOf(column) - 1; index >= 0; index--) {
+            if (squareHasPiece(columns[index] + rank)) {
+                let pieceCastle = getPieceBySquare(columns[index] + rank)
+    
+                if (getPieceType(pieceCastle) === "rook") {
+                    if (isFirstMove(piece) && isFirstMove(pieceCastle)) {
+                        castleQueenside = true
+                    }
+                } else {
+                    break
                 }
-            } else {
-                break
             }
         }
     }

@@ -1,5 +1,16 @@
 import { getSquare } from "../variables.js";
-import { getPin } from "./pin-squares.js";
+import { getAllPinSquares, getPin } from "./pin-squares.js";
+
+export function AllBishopPin(piece) {
+    let square = getSquare(piece)
+
+    return [
+        ...getAllPinSquares(square, "up-left"),
+        ...getAllPinSquares(square, "up-right"),
+        ...getAllPinSquares(square, "down-right"),
+        ...getAllPinSquares(square, "down-left"),
+    ]
+}
 
 export default function BishopPin(piece) {
     let square = getSquare(piece)

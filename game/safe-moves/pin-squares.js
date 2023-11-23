@@ -1,6 +1,22 @@
 import { getAllMoves } from "../moves/move-squares.js"
 import { columns, getColor, getPieceBySquare, getPieceType, ranks, squareHasPiece } from "../variables.js"
 
+export function getAllPinSquares(square, direction, columnsSet = columns, ranksSet = ranks) {
+    let squares = getAllMoves(square, direction, columnsSet, ranksSet)
+    let color = getColor(getPieceBySquare(square))
+
+    if (squares.some(s => squareHasPiece(s) && color === getColor(getPieceBySquare(s)))) {
+        return []
+    }
+
+    if (!squares.some(s =>
+        squareHasPiece(s) && getPieceType(getPieceBySquare(s)) === "king" && color !== getColor(getPieceBySquare(s)))) {
+        return []
+    }
+
+    return squares
+}
+
 export function getPin(square, direction, columnsSet = columns, ranksSet = ranks) {
     let allSquares = getAllMoves(square, direction, columnsSet, ranksSet)
     let squares = []
@@ -13,15 +29,15 @@ export function getPin(square, direction, columnsSet = columns, ranksSet = ranks
             if (squareHasPiece(allSquares[index])) {
                 let pinPiece = getPieceBySquare(allSquares[index])
 
-                if (getPieceType(pinPiece) === "king" && color !== getColor(pinPiece)) {                    
+                if (getPieceType(pinPiece) === "king" && color !== getColor(pinPiece)) {
                     break
                 }
             }
         }
     }
 
-    if (!squares.some(square =>
-        squareHasPiece(square) && getPieceType(getPieceBySquare(square)) === "king" && color !== getColor(getPieceBySquare(square)))) {
+    if (!squares.some(s =>
+        squareHasPiece(s) && getPieceType(getPieceBySquare(s)) === "king" && color !== getColor(getPieceBySquare(s)))) {
         return []
     }
 

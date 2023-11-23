@@ -66,22 +66,10 @@ export const getPieceMove = (piece) => parseInt(piece.dataset.move)
 export const getPieceBySquare = (square) => getPieces().find(piece => getSquare(piece) === square)
 export const isFirstMove = (piece) => getPieceMove(piece) === 0
 
-// GAME FEATURES
-export var turn = "white"
-export const swapTurn = () => turn = turn === "white" ? "black" : "white"
-
-export var round = 1
-export var roundPerMove = 1
-export const incrementRound = () => round += 1
-export const incrementRoundPerMove = () => roundPerMove += 1
-
 export const isCastle = (piece, square) => getPieceType(piece) === "king" && isFirstMove(piece) && hasClass(findSquare(square), "castle")
 
 export const isPromotion = (piece, rank) => getPieceType(piece) === "pawn" &&
     ((getColor(piece) === "white" && rank === "8") || (getColor(piece) === "black" && rank === "1"))
-
-export const promotionList = () => getElement(".promotion")
-export const promotionOptions = () => getElements(".piece", promotionList())
 
 export var isPassant = false
 export const setPassant = () => isPassant = true
@@ -97,4 +85,20 @@ export const movePiece = (piece, square) => {
 
 export const capturePiece = (piece) => piece.remove()
 
+// GAME FEATURES
+export var turn = "white"
+export const swapTurn = () => turn = turn === "white" ? "black" : "white"
+export const opponentColor = (color = turn) => color === "white" ? "black" : "white"
+
+export var round = 1
+export var roundPerMove = 1
+export const incrementRound = () => round += 1
+export const incrementRoundPerMove = () => roundPerMove += 1
+
+export const promotionList = () => getElement(".promotion")
+export const promotionOptions = () => getElements(".piece", promotionList())
+
 export const gameHistory = []
+
+export var check = false
+export const setCheck = () => check = !check

@@ -46,6 +46,24 @@ export const passantCapture = (square, color) => {
     return capture
 }
 
+export function PawnCapture(piece) {
+    let square = getSquare(piece)
+    let color = getColor(piece)
+    let [c, r] = square.split("")
+
+    return {
+        moves: [
+            ...getMoves(square, pawnCaptureDirection1(color), pawnCaptureColumns(c), pawnCaptureRanks(r, color)),
+            ...getMoves(square, pawnCaptureDirection2(color), pawnCaptureColumns(c), pawnCaptureRanks(r, color)),
+        ],
+
+        captures: [
+            ...getCaptures(square, pawnCaptureDirection1(color), pawnCaptureColumns(c), pawnCaptureRanks(r, color)),
+            ...getCaptures(square, pawnCaptureDirection2(color), pawnCaptureColumns(c), pawnCaptureRanks(r, color)),
+        ]
+    }
+}
+
 export default function PawnMove(piece) {
     let square = getSquare(piece)
     let color = getColor(piece)
