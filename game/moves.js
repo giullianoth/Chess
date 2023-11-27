@@ -1,6 +1,6 @@
 import { CheckCheck, EscapeFromCheck } from "./check.js";
 import { AvaliableMoves } from "./moves/avaliable-moves.js";
-import { addClass, board, capturePiece, check, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceMove, getPieceName, getPieceType, getPieces, getSquare, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setCheck, setName, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn, unsetPassant } from "./variables.js";
+import { addClass, board, capturePiece, check, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceMove, getPieceName, getPieceType, getPieces, getSquare, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setCheck, setKingInCheck, setName, setPieceCheck, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn, unsetPassant } from "./variables.js";
 
 const moveSquareElement = (square) => {
     let element = document.createElement("div")
@@ -42,7 +42,7 @@ function insertMoveSquares(piece) {
     }
 
     if (captures.length) {
-        forEach(square => board.append(captureSquareElement(square)))
+        captures.forEach(square => board.append(captureSquareElement(square)))
     }
 }
 
@@ -153,21 +153,17 @@ function move(piece, moveSquare) {
     })
 
     movePiece(piece, square)
+
     check && setCheck()
+    setKingInCheck()
+    setPieceCheck()
     getPieces().forEach(p => removeClass(p, "check"))
 
-    // CheckCheck(piece)
+    CheckCheck(piece)
 
     swapTurn()
     incrementRoundPerMove()
     getColor(piece) === "black" && incrementRound()
-
-    console.log(
-        `${gameHistory[roundPerMove - 2].last_round} - 
-        ${getPieceName(gameHistory[roundPerMove - 2].moved_piece)} ${gameHistory[roundPerMove - 2].color}:
-        ${gameHistory[roundPerMove - 2].square_origin} - ${gameHistory[roundPerMove - 2].square_destination}
-        ${gameHistory[roundPerMove - 2].captured_piece ? " captures " + getPieceName(gameHistory[roundPerMove - 2].captured_piece) : ""}`
-    );
 }
 
 export default function Moves() {

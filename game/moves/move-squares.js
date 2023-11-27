@@ -1,4 +1,4 @@
-import { columns, getColor, getPieceBySquare, ranks, squareHasPiece, turn } from "../variables.js"
+import { columns, getColor, getPieceBySquare, getPieceType, getPiecesByColor, getSquare, opponentColor, ranks, squareHasPiece, turn } from "../variables.js"
 
 const moveUp = (square, ranksSet) => {
     let [c, r] = square.split("")
@@ -164,4 +164,15 @@ export function getCaptures(square, direction, columnsSet = columns, ranksSet = 
     }
 
     return avaliableSquares
+}
+
+export function getPin(square, direction, columnsSet = columns, ranksSet = ranks) {
+    let piece = getPieceBySquare(square)
+    let color = getColor(piece)
+    let king = getPiecesByColor(opponentColor(color)).find(p => getPieceType(p) === "king")
+    let kingSquare = getSquare(king)
+
+    let squares = getAllMoves(square, direction, columnsSet, ranksSet)
+
+    return squares
 }
