@@ -1,7 +1,6 @@
-import { CheckCheck } from "./check.js";
+import { CheckCheck, EscapeFromCheck } from "./check.js";
 import { AvaliableMoves } from "./moves/avaliable-moves.js";
-import SafeMoves from "./safe-moves/safe-moves.js";
-import { addClass, board, capturePiece, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceMove, getPieceName, getPieceType, getPieces, getSquare, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setName, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn, unsetPassant } from "./variables.js";
+import { addClass, board, capturePiece, check, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getPieceBySquare, getPieceMove, getPieceName, getPieceType, getPieces, getSquare, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, movePiece, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setCheck, setName, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn, unsetPassant } from "./variables.js";
 
 const moveSquareElement = (square) => {
     let element = document.createElement("div")
@@ -36,14 +35,14 @@ const promotionElement = (color) => {
 }
 
 function insertMoveSquares(piece) {
-    let { moves, captures } = AvaliableMoves(piece)
+    let { moves, captures } = /*check ? EscapeFromCheck(piece) :*/ AvaliableMoves(piece)
 
-    if (moves) {
-        SafeMoves(piece, moves, captures).moves.forEach(square => board.append(moveSquareElement(square)))
+    if (moves.length) {
+        moves.forEach(square => board.append(moveSquareElement(square)))
     }
 
-    if (captures) {
-        SafeMoves(piece, moves, captures).captures.forEach(square => board.append(captureSquareElement(square)))
+    if (captures.length) {
+        forEach(square => board.append(captureSquareElement(square)))
     }
 }
 
@@ -154,12 +153,21 @@ function move(piece, moveSquare) {
     })
 
     movePiece(piece, square)
+    check && setCheck()
+    getPieces().forEach(p => removeClass(p, "check"))
 
-    CheckCheck(piece)
+    // CheckCheck(piece)
 
     swapTurn()
     incrementRoundPerMove()
     getColor(piece) === "black" && incrementRound()
+
+    console.log(
+        `${gameHistory[roundPerMove - 2].last_round} - 
+        ${getPieceName(gameHistory[roundPerMove - 2].moved_piece)} ${gameHistory[roundPerMove - 2].color}:
+        ${gameHistory[roundPerMove - 2].square_origin} - ${gameHistory[roundPerMove - 2].square_destination}
+        ${gameHistory[roundPerMove - 2].captured_piece ? " captures " + getPieceName(gameHistory[roundPerMove - 2].captured_piece) : ""}`
+    );
 }
 
 export default function Moves() {

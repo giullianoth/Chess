@@ -11,8 +11,8 @@ export const pawnMoveRanks = (rank, color, piece) => {
         : ranks.filter((r, i) => i >= ranks.indexOf(rank) && i <= ranks.indexOf(rank) + 2)
 
     if (!isFirstMove(piece)) {
-        color === "white" && ranksList.shift()
-        color === "black" && ranksList.pop()
+        color === "white" && rank !== "7" && ranksList.shift()
+        color === "black" && rank !== "2" && ranksList.pop()
     }
 
     return ranksList

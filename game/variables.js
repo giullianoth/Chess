@@ -102,3 +102,8 @@ export const gameHistory = []
 
 export var check = false
 export const setCheck = () => check = !check
+
+export var kingInCheck = null
+export var pieceCheck = null
+export const setKingInCheck = (king = null) => kingInCheck = king
+export const setPieceCheck = (piece = null) => pieceCheck = piece

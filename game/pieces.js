@@ -67,7 +67,7 @@ const initialSquare = (color, pieceName) => {
             break;
 
         case "king":
-            square = color === "white" ? "e1" : "g4"
+            square = color === "white" ? "e1" : "e8"
             break;
     }
 

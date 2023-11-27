@@ -5,12 +5,9 @@ export function getAllPinSquares(square, direction, columnsSet = columns, ranksS
     let squares = getAllMoves(square, direction, columnsSet, ranksSet)
     let color = getColor(getPieceBySquare(square))
 
-    if (squares.some(s => squareHasPiece(s) && color === getColor(getPieceBySquare(s)))) {
-        return []
-    }
-
     if (!squares.some(s =>
-        squareHasPiece(s) && getPieceType(getPieceBySquare(s)) === "king" && color !== getColor(getPieceBySquare(s)))) {
+        squareHasPiece(s) && getPieceType(getPieceBySquare(s)) === "king" && color !== getColor(getPieceBySquare(s)))
+        && squares.some(s => squareHasPiece(s) && color === getColor(getPieceBySquare(s)))) {
         return []
     }
 
