@@ -24,18 +24,20 @@ const promotionElement = (color) => {
     element.className = "promotion"
     setStyle(element, (color === "white" ? "top" : "bottom"), 0)
 
-    element.innerHTML = `
-        <i class="fa-solid fa-chess-knight piece ${color}" data-type="knight"></i>
-        <i class="fa-solid fa-chess-bishop piece ${color}" data-type="bishop"></i>
-        <i class="fa-solid fa-chess-rook piece ${color}" data-type="rook"></i>
-        <i class="fa-solid fa-chess-queen piece ${color}" data-type="queen"></i>
-    `
+    let piecesToPromote = ["knight", "bishop", "rook", "queen"]
+
+    piecesToPromote.forEach(pieceType => {
+        let piece = document.createElement("i")
+        piece.className = `fa-solid fa-chess-${pieceType} piece ${color}`
+        setType(piece, pieceType)
+        element.append(piece)
+    })
 
     return element
 }
 
 function insertMoveSquares(piece) {
-    let { moves, captures } = /*check ? EscapeFromCheck(piece) :*/ AvaliableMoves(piece)
+    let { moves, captures } = AvaliableMoves(piece)
 
     if (moves.length) {
         moves.forEach(square => board.append(moveSquareElement(square)))
@@ -154,12 +156,12 @@ function move(piece, moveSquare) {
 
     movePiece(piece, square)
 
-    check && setCheck()
-    setKingInCheck()
-    setPieceCheck()
-    getPieces().forEach(p => removeClass(p, "check"))
+    // check && setCheck()
+    // setKingInCheck()
+    // setPieceCheck()
+    // getPieces().forEach(p => removeClass(p, "check"))
 
-    CheckCheck(piece)
+    // CheckCheck(piece)
 
     swapTurn()
     incrementRoundPerMove()

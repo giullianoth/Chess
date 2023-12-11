@@ -172,7 +172,11 @@ export function getPin(square, direction, columnsSet = columns, ranksSet = ranks
     let king = getPiecesByColor(opponentColor(color)).find(p => getPieceType(p) === "king")
     let kingSquare = getSquare(king)
 
-    let squares = getAllMoves(square, direction, columnsSet, ranksSet)
+    let pinSquares = getAllMoves(square, direction, columnsSet, ranksSet)
 
-    return squares
+    if (!pinSquares.some(s => squareHasPiece(s) && s === kingSquare && getPieceBySquare(s) === king)) {
+        return []
+    }
+
+    return pinSquares
 }

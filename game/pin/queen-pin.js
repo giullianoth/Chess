@@ -1,7 +1,7 @@
 import { getPin } from "../moves/move-squares.js";
 import { getSquare } from "../variables.js";
 
-export default function RookPin(piece) {
+export default function QueenPin(piece) {
     let square = getSquare(piece)
 
     return [
@@ -9,5 +9,10 @@ export default function RookPin(piece) {
         ...getPin(square, "down"),
         ...getPin(square, "left"),
         ...getPin(square, "right"),
+
+        ...getPin(square, "up-left"),
+        ...getPin(square, "up-right"),
+        ...getPin(square, "down-right"),
+        ...getPin(square, "down-left"),
     ]
 }

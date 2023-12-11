@@ -101,7 +101,9 @@ export const promotionOptions = () => getElements(".piece", promotionList())
 export const gameHistory = []
 
 export var check = false
+export var checkMate = false
 export const setCheck = () => check = !check
+export const endGame = () => checkMate = true
 
 export var kingInCheck = null
 export var pieceCheck = null
