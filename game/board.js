@@ -1,15 +1,16 @@
-import { board, columns, indicatorColumns, indicatorRanks, isEven, isOdd, ranks, setSquare } from "./variables.js";
+import { board, columns, indicatorColumns, indicatorRanks, isEven, isOdd, ranks, setSquare } from "./variables.js"
 
 const squareElement = (square, columnIndex, rankIndex) => {
     let element = document.createElement("div")
+
     let castle = square === "c1" || square === "g1" || square === "c8" || square === "g8" ? " castle" : ""
+    let passant = ranks[rankIndex] === "4" || ranks[rankIndex] === "5" ? " passant" : ""
+    let squareColor = (isEven(columnIndex) && isEven(rankIndex) || isOdd(columnIndex) && isOdd(rankIndex)) ? "light" : "dark"
+    let promotion = ranks[rankIndex] === "1" || ranks[rankIndex] === "8" ? " promotion-square" : ""
 
-    let squareColor = (isEven(columnIndex) && isEven(rankIndex)) || (isOdd(columnIndex) && isOdd(rankIndex))
-        ? "light" : "dark"
-
-    element.className = `square ${squareColor}${castle}`
     setSquare(element, square)
-
+    element.className = `square ${squareColor + castle + passant + promotion}`
+    
     return element
 }
 

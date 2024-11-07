@@ -1,4 +1,4 @@
-import { columns, getColor, getPieceBySquare, getPieceType, getPiecesByColor, getSquare, opponentColor, ranks, squareHasPiece, turn } from "../variables.js"
+import { columns, ranks } from "../variables.js"
 
 const moveUp = (square, ranksSet) => {
     let [c, r] = square.split("")
@@ -92,12 +92,16 @@ const moveDownLeft = (square, columnsSet, ranksSet) => {
     return columnsSet.map((column, index) => column + ranksSet[index])
 }
 
-export function getAllMoves(square, direction, columnsSet = columns, ranksSet = ranks) {
+export default function AllMoveSquares(square, direction, columnsSet = columns, ranksSet = ranks) {
     let squares = []
 
     switch (direction) {
         case "up":
             squares = moveUp(square, ranksSet)
+            break;
+
+        case "right":
+            squares = moveRight(square, columnsSet)
             break;
 
         case "down":
@@ -106,10 +110,6 @@ export function getAllMoves(square, direction, columnsSet = columns, ranksSet = 
 
         case "left":
             squares = moveLeft(square, columnsSet)
-            break;
-
-        case "right":
-            squares = moveRight(square, columnsSet)
             break;
 
         case "up-left":
@@ -130,53 +130,4 @@ export function getAllMoves(square, direction, columnsSet = columns, ranksSet = 
     }
 
     return squares
-}
-
-export function getMoves(square, direction, columnsSet = columns, ranksSet = ranks) {
-    let squares = getAllMoves(square, direction, columnsSet, ranksSet)
-    let avaliableSquares = []
-
-    if (squares.length) {
-        for (let index = 0; index < squares.length; index++) {
-            if (squareHasPiece(squares[index])) {
-                break
-            }
-
-            avaliableSquares.push(squares[index])
-        }
-    }
-
-    return avaliableSquares
-}
-
-export function getCaptures(square, direction, columnsSet = columns, ranksSet = ranks, colorToCompare = turn) {
-    let squares = getAllMoves(square, direction, columnsSet, ranksSet)
-    let avaliableSquares = []
-
-    if (squares.length) {
-        for (let index = 0; index < squares.length; index++) {
-            if (squareHasPiece(squares[index])) {
-                let pieceInSquare = getPieceBySquare(squares[index])
-                getColor(pieceInSquare) !== colorToCompare && avaliableSquares.push(squares[index])
-                break
-            }
-        }
-    }
-
-    return avaliableSquares
-}
-
-export function getPin(square, direction, columnsSet = columns, ranksSet = ranks) {
-    let piece = getPieceBySquare(square)
-    let color = getColor(piece)
-    let king = getPiecesByColor(opponentColor(color)).find(p => getPieceType(p) === "king")
-    let kingSquare = getSquare(king)
-
-    let pinSquares = getAllMoves(square, direction, columnsSet, ranksSet)
-
-    if (!pinSquares.some(s => squareHasPiece(s) && s === kingSquare && getPieceBySquare(s) === king)) {
-        return []
-    }
-
-    return pinSquares
 }
