@@ -1,4 +1,4 @@
-import { columns, gameHistory, getColor, getName, getPassantSquares, getPiecesByColor, getSquare, getType, opponentColor, ranks, roundPerMove, setPassant, squareHasPiece } from "../../variables.js"
+import { columns, gameHistory, getColor, getName, getPassantSquares, getPiecesByColor, getSquare, getType, opponentColor, ranks, roundPerMove, setPassant } from "../../variables.js"
 import CaptureSquares from "./squares.js"
 
 const pawnDirection1 = (color) => `${color === "white" ? "up" : "down"}-left`

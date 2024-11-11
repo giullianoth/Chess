@@ -1,4 +1,5 @@
-import { columns, getSquare, ranks } from "../../variables.js"
+import { PossibleCaptures } from "../../avaliable-moves.js"
+import { columns, getColor, getSquare, ranks } from "../../variables.js"
 import CaptureSquares from "./squares.js"
 
 const kingColumns = (column) => columns.filter((c, i) => i > columns.indexOf(column) - 2 && i < columns.indexOf(column) + 2)
@@ -6,6 +7,7 @@ const kingRanks = (rank) => ranks.filter((r, i) => i > ranks.indexOf(rank) - 2 &
 
 export default function KingCaptures(piece) {
     let square = getSquare(piece)
+    let color = getColor(piece)
     let [c, r] = square.split("")
 
     let squares = [
@@ -20,5 +22,7 @@ export default function KingCaptures(piece) {
         ...CaptureSquares(square, "down-left", kingColumns(c), kingRanks(r)),
     ]
 
-    return squares
+    let safeSquares = squares.filter(s => !PossibleCaptures(color).includes(s))
+    
+    return safeSquares
 }

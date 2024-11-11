@@ -1,4 +1,5 @@
-import { columns, getPieceBySquare, getSquare, getType, isFirstMove, ranks, squareHasPiece } from "../../variables.js"
+import { PossibleCaptures } from "../../avaliable-moves.js"
+import { columns, getColor, getPieceBySquare, getSquare, getType, isFirstMove, ranks, squareHasPiece } from "../../variables.js"
 import MoveSquares from "./squares.js"
 
 const kingColumns = (column, rank, piece) => {
@@ -40,6 +41,7 @@ const kingRanks = (rank) => ranks.filter((r, i) => i > ranks.indexOf(rank) - 2 &
 
 export default function KingMoves(piece) {
     let square = getSquare(piece)
+    let color = getColor(piece)
     let [c, r] = square.split("")
 
     let squares = [
@@ -53,6 +55,10 @@ export default function KingMoves(piece) {
         ...MoveSquares(square, "down-right", kingColumns(c, r, piece), kingRanks(r)),
         ...MoveSquares(square, "down-left", kingColumns(c, r, piece), kingRanks(r)),
     ]
+
+    let safeSquares = squares.filter(s => !PossibleCaptures(color).includes(s))
+    
+    return safeSquares
 
     return squares
 }

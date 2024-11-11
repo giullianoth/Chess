@@ -10,7 +10,16 @@ import KnightMoves from "./moves-and-captures/moves/knight.js"
 import PawnMoves from "./moves-and-captures/moves/pawn.js"
 import QueenMoves from "./moves-and-captures/moves/queen.js"
 import RookMoves from "./moves-and-captures/moves/rook.js"
-import {getType } from "./variables.js"
+import BishopPin from "./moves-and-captures/pin/bishop.js"
+import QueenPin from "./moves-and-captures/pin/queen.js"
+import RookPin from "./moves-and-captures/pin/rook.js"
+import BishopPossibleCaptures from "./moves-and-captures/possible-captures/bishop.js"
+import KingPossibleCaptures from "./moves-and-captures/possible-captures/king.js"
+import KnightPossibleCaptures from "./moves-and-captures/possible-captures/knight.js"
+import PawnPossibleCaptures from "./moves-and-captures/possible-captures/pawn.js"
+import QueenPossibleCaptures from "./moves-and-captures/possible-captures/queen.js"
+import RookPossibleCaptures from "./moves-and-captures/possible-captures/rook.js"
+import { getPiecesByColor, getType, opponentColor } from "./variables.js"
 
 export const AvaliableMoves = (piece) => {
     let moves = []
@@ -76,4 +85,60 @@ export const AvaliableCaptures = (piece) => {
     }
 
     return captures
+}
+
+export function PossibleCaptures(color) {
+    let squares = []
+
+    getPiecesByColor(opponentColor(color)).forEach(piece => {
+        switch (getType(piece)) {
+            case "rook":
+                squares.push(...RookPossibleCaptures(piece))
+                break;
+
+            case "bishop":
+                squares.push(...BishopPossibleCaptures(piece))
+                break;
+
+            case "queen":
+                squares.push(...QueenPossibleCaptures(piece))
+                break;
+
+            case "king":
+                squares.push(...KingPossibleCaptures(piece))
+                break;
+
+            case "knight":
+                squares.push(...KnightPossibleCaptures(piece))
+                break;
+
+            case "pawn":
+                squares.push(...PawnPossibleCaptures(piece))
+                break;
+        }
+    })
+
+    return Array.from(new Set(squares))
+}
+
+export function Pin(color) {
+    let squares = []
+
+    getPiecesByColor(opponentColor(color)).forEach(piece => {
+        switch (getType(piece)) {
+            case "rook":
+                squares.push(RookPin(piece))
+                break;
+
+            case "bishop":
+                squares.push(BishopPin(piece))
+                break;
+
+            case "queen":
+                squares.push(QueenPin(piece))
+                break;
+        }
+    })
+
+    return squares
 }

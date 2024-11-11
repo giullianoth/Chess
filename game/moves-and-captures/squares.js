@@ -58,7 +58,7 @@ const moveUpRight = (square, columnsSet, ranksSet) => {
 
 const moveDownRight = (square, columnsSet, ranksSet) => {
     let [c, r] = square.split("")
-    columnsSet = columnsSet.filter((column, index) => index < columnsSet.indexOf(c)).reverse()
+    columnsSet = columnsSet.filter((column, index) => index > columnsSet.indexOf(c))
     ranksSet = ranksSet.filter((rank, index) => index > ranksSet.indexOf(r))
 
     if (columnsSet.length > ranksSet.length) {
@@ -76,7 +76,7 @@ const moveDownRight = (square, columnsSet, ranksSet) => {
 
 const moveDownLeft = (square, columnsSet, ranksSet) => {
     let [c, r] = square.split("")
-    columnsSet = columnsSet.filter((column, index) => index > columnsSet.indexOf(c))
+    columnsSet = columnsSet.filter((column, index) => index < columnsSet.indexOf(c)).reverse()
     ranksSet = ranksSet.filter((rank, index) => index > ranksSet.indexOf(r))
 
     if (columnsSet.length > ranksSet.length) {

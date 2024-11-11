@@ -1,22 +1,42 @@
-import { AvaliableCaptures, AvaliableMoves } from "./avaliable-moves.js";
+import { AvaliableCaptures, AvaliableMoves, Pin } from "./avaliable-moves.js";
 import Promotion from "./promotion.js";
 import { addClass, board, capturePiece, gameHistory, getCastleSquares, getColor, getCoordinateBySquare, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getPromotionSquares, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isFirstMove, isPassant, movePiece, removeClass, round, roundPerMove, setSquare, setStyle, swapTurn, toggleClass, turn, unsetPassant } from "./variables.js";
 
 const setMoveSquares = (piece) => {
-    getMoveSquares() && getMoveSquares().forEach(square => !hasClass(square, "fixed") && square.remove())
+    getMoveSquares() && getMoveSquares().forEach(s => !hasClass(s, "fixed") && s.remove())
 
     let moveSquares = AvaliableMoves(piece)
     let captureSquares = AvaliableCaptures(piece)
+    let pinSquares = Pin(getColor(piece))
+    let square = getSquare(piece)
 
-    if (moveSquares.length) {
-        moveSquares.forEach(square => {
-            board.append(moveSquareElement(square))
+    let safeMoveSquares = []
+    let safeCaptureSquares = []
+
+    if (pinSquares.some(list => Object.entries(list).length)) {
+        let listOfSquares = pinSquares.find(list => Object.entries(list).length && list.betweenPieces.includes(square))
+        
+        if (listOfSquares) {
+            safeMoveSquares = moveSquares.filter(s => listOfSquares.betweenPieces.includes(s))
+            safeCaptureSquares = captureSquares.filter(s => listOfSquares.betweenPieces.includes(s))
+        } else {
+            safeMoveSquares = moveSquares
+            safeCaptureSquares = captureSquares
+        }
+    } else {
+        safeMoveSquares = moveSquares
+        safeCaptureSquares = captureSquares
+    }
+
+    if (safeMoveSquares.length) {
+        safeMoveSquares.forEach(s => {
+            board.append(moveSquareElement(s))
         })
     }
 
-    if (captureSquares.length) {
-        captureSquares.forEach(square => {
-            board.append(captureSquareElement(square))
+    if (safeCaptureSquares.length) {
+        safeCaptureSquares.forEach(s => {
+            board.append(captureSquareElement(s))
         })
     }
 }
@@ -28,7 +48,6 @@ const moveSquareElement = (square) => {
     setSquare(element, square)
     setStyle(element, "top", `${top}px`)
     setStyle(element, "left", `${left}px`)
-
     return element
 }
 
