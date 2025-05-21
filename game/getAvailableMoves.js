@@ -11,12 +11,12 @@ import { getColor, getPiecesByColor, getSquare, getType, opponent, squareHasPiec
  * @param {HTMLElement | null} piece 
  * @returns {string[]}
  */
-export const pin = (piece = null) => {
+export const pin = (piece) => {
     let pinSquares = []
-    let square = piece ? getSquare(piece) : null
-    let color = piece ? getColor(piece) : null
+    let square = getSquare(piece)
+    let color = getColor(piece)
 
-    getPiecesByColor(opponent(color ?? turn)).forEach(p => {
+    getPiecesByColor(opponent(color)).forEach(p => {
         let type = getType(p)
 
         switch (type) {

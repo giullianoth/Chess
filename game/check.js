@@ -1,7 +1,7 @@
 import { getAvailableCaptures, getAvailableMoves, pin } from "./getAvailableMoves.js"
-import { bishopLine } from "./pieceMoves/bishop.js"
-import { queenLine } from "./pieceMoves/queen.js"
-import { rookLine } from "./pieceMoves/rook.js"
+import { bishopLine, bishopPin } from "./pieceMoves/bishop.js"
+import { queenLine, queenPin } from "./pieceMoves/queen.js"
+import { rookLine, rookPin } from "./pieceMoves/rook.js"
 import { addClass, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck, turn } from "./variables.js"
 
 /**
@@ -22,7 +22,11 @@ export const checkCheck = () => {
         setCheck(true)
     }
 }
-
+/**
+ * Returns the list of available moves of a specified piece, when the king is in check
+ * @param {HTMLElement} piece 
+ * @returns {string[]}
+ */
 export const moveScape = piece => {
     let moves = []
     let availableMoves = getAvailableMoves(piece)
@@ -50,13 +54,30 @@ export const moveScape = piece => {
         moves = availableMoves.filter(s => !list.includes(s))
     } else {
         if (availableMoves.length && piecesCheck.length === 1) {
-            moves = availableMoves.filter(square => pin().includes(square))
+            switch (getType(piecesCheck[0])) {
+                case "rook":
+                    moves = availableMoves.filter(square => rookPin(piecesCheck[0]).includes(square))
+                    break
+
+                case "bishop":
+                    moves = availableMoves.filter(square => bishopPin(piecesCheck[0]).includes(square))
+                    break
+
+                case "queen":
+                    moves = availableMoves.filter(square => queenPin(piecesCheck[0]).includes(square))
+                    break
+            }
         }
     }
 
     return moves
 }
 
+/**
+ * Returns the list of available captures of a specified piece, when the king is in check
+ * @param {HTMLElement} piece 
+ * @returns {string[]}
+ */
 export const captureScape = piece => {
     let captures = []
     let availableCaptures = getAvailableCaptures(piece)

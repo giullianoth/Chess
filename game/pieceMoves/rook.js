@@ -1,5 +1,5 @@
 import { getCaptures, getMoves, getPossibleCaptureSquares } from "./getAvailableSquares.js"
-import { getColor, getPieceBySquare, getSquare, getType, squareHasPiece } from "../variables.js"
+import { getColor, getSquare } from "../variables.js"
 import { getColumn, getPin, getRank } from "../lines/getLines.js"
 
 /**
