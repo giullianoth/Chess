@@ -88,6 +88,13 @@ export const isEven = (num) => num % 2 === 0
  */
 export const isOdd = (num) => !isEven(num)
 
+/**
+ * Returns a text with first letter in upper case
+ * @param {string} text 
+ * @returns {string}
+ */
+export const capitalized = text => text.charAt(0).toUpperCase() + text.slice(1)
+
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // BOARD

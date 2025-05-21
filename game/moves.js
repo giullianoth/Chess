@@ -1,6 +1,6 @@
 import { captureScape, checkCheck, moveScape } from "./check.js";
 import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js";
-import { addClass, board, capturePiece, check, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setCheck, setName, setPassant, setSquare, setStyle, setType, swapTurn, toggleClass, turn } from "./variables.js";
+import { addClass, board, capitalized, capturePiece, check, checkMate, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setCheck, setName, setPassant, setSquare, setStyle, setType, swapTurn, toggleClass, turn } from "./variables.js";
 
 /**
  * Returns an element of a move square representation
@@ -84,7 +84,7 @@ const movement = (piece, square) => {
     let pieceToCapture = getPieceBySquare(square)
     let squareOrigin = getSquare(piece)
     let color = getColor(piece)
-    
+
     if (check) {
         let king = getPiecesByColor(color).find(p => getType(p) === "king")
         removeClass(king, "check")
@@ -100,7 +100,7 @@ const movement = (piece, square) => {
         let [c, r] = square.split("")
         let castleSquare = (c === "c" ? "d" : "f") + r
         let castleRook = getPieceBySquare((c === "c" ? "a" : "h") + r)
-        
+
         if (castleRook && getType(castleRook) === "rook" && isFirstMove(castleRook) && color === getColor(castleRook)) {
             movePiece(castleRook, castleSquare)
         }
@@ -129,16 +129,15 @@ const movement = (piece, square) => {
         squareDestination: square
     })
 
+    console.log(`Round ${round}\n${capitalized(getName(piece))}${pieceToCapture ? ` x ${capitalized(getName(pieceToCapture))}` : ""} - ${square}`)
+
     if (turn === "black") {
         incrementRound()
     }
 
     incrementRoundPerMove()
     swapTurn()
-
     checkCheck()
-
-    console.log(gameHistory)
 }
 
 /**
@@ -165,6 +164,10 @@ const promotion = (piece, square) => {
  * @param {HTMLElement} piece 
  */
 const selectPiece = piece => {
+    if (checkMate) {
+        return
+    }
+
     setPassant(false)
     addClass(piece, "active")
     setMoveSquares(piece)
@@ -175,6 +178,10 @@ const selectPiece = piece => {
  * @param {HTMLElement} piece 
  */
 const disselectPiece = piece => {
+    if (checkMate) {
+        return
+    }
+
     if (!hasClass(piece, "selected")) {
         removeClass(piece, "active")
     }
@@ -193,6 +200,10 @@ const disselectPiece = piece => {
  * @param {HTMLElement} piece 
  */
 const defineMove = piece => {
+    if (checkMate) {
+        return
+    }
+
     let color = getColor(piece)
 
     getPiecesByColor(color).forEach(p => {

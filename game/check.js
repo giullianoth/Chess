@@ -1,8 +1,8 @@
-import { getAvailableCaptures, getAvailableMoves, pin } from "./getAvailableMoves.js"
+import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js"
 import { bishopLine, bishopPin } from "./pieceMoves/bishop.js"
 import { queenLine, queenPin } from "./pieceMoves/queen.js"
 import { rookLine, rookPin } from "./pieceMoves/rook.js"
-import { addClass, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck, turn } from "./variables.js"
+import { addClass, endGame, getColor, getName, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck } from "./variables.js"
 
 /**
  * Verifies if the next player is in check
@@ -10,6 +10,7 @@ import { addClass, getPiecesByColor, getSquare, getType, opponent, piecesCheck, 
 export const checkCheck = () => {
     let king = getPiecesByColor().find(piece => getType(piece) === "king")
     let square = getSquare(king)
+    let color = getColor(king)
 
     getPiecesByColor(opponent()).forEach(piece => {
         if (getAvailableCaptures(piece).length && getAvailableCaptures(piece).includes(square)) {
@@ -20,8 +21,14 @@ export const checkCheck = () => {
     if (piecesCheck.length) {
         addClass(king, "check")
         setCheck(true)
+
+        if (getPiecesByColor(color).every(piece => !moveScape(piece).length && !captureScape(piece).length)) {
+            endGame()
+            console.log("Checkmate")
+        }
     }
 }
+
 /**
  * Returns the list of available moves of a specified piece, when the king is in check
  * @param {HTMLElement} piece 
