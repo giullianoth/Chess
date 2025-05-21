@@ -1,7 +1,16 @@
 import { board, getCoordinateBySquare, setColor, setMove, setName, setSquare, setStyle, setType } from "./variables.js"
 
+/**
+ * The pieces list of each player
+ */
 const piecesList = ["pawn1", "pawn2", "pawn3", "pawn4", "pawn5", "pawn6", "pawn7", "pawn8", "rook1", "rook2", "knight1", "knight2", "bishop1", "bishop2", "queen", "king"]
 
+/**
+ * Returns the initial square of every piece
+ * @param {string} color 
+ * @param {string} pieceName 
+ * @returns {string}
+ */
 const initialSquare = (color, pieceName) => {
     let square = ""
 
@@ -74,6 +83,12 @@ const initialSquare = (color, pieceName) => {
     return square
 }
 
+/**
+ * Returns the HTML element of a piece
+ * @param {string} pieceName 
+ * @param {string} color 
+ * @returns {HTMLElement}
+ */
 const pieceElement = (pieceName, color) => {
     let element = document.createElement("i")
     let pieceType = pieceName !== "queen" && pieceName !== "king" ? pieceName.substring(0, pieceName.length - 1) : pieceName

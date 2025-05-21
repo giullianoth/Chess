@@ -145,7 +145,7 @@ body {
     background-color: var(--persian-red-6);
 }
 
-.promotion {
+.promotionPieces {
     position: absolute;
     left: 0;
     width: 100%;
@@ -156,10 +156,10 @@ body {
     border: 2px solid var(--aspargus);
 }
 
-.promotion .piece {
+.promotionPieces .piece {
     position: initial;
 }
 
-.promotion .piece:hover {
+.promotionPieces .piece:hover {
     background-color: var(--icterine);
 }

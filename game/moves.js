@@ -1,47 +1,13 @@
-import { AvaliableCaptures, AvaliableMoves, Pin } from "./avaliable-moves.js";
-import Promotion from "./promotion.js";
-import { addClass, board, capturePiece, gameHistory, getCastleSquares, getColor, getCoordinateBySquare, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getPromotionSquares, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isFirstMove, isPassant, movePiece, removeClass, round, roundPerMove, setSquare, setStyle, swapTurn, toggleClass, turn, unsetPassant } from "./variables.js";
+import { captureScape, checkCheck, moveScape } from "./check.js";
+import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js";
+import { addClass, board, capturePiece, check, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setCheck, setName, setPassant, setSquare, setStyle, setType, swapTurn, toggleClass, turn } from "./variables.js";
 
-const setMoveSquares = (piece) => {
-    getMoveSquares() && getMoveSquares().forEach(s => !hasClass(s, "fixed") && s.remove())
-
-    let moveSquares = AvaliableMoves(piece)
-    let captureSquares = AvaliableCaptures(piece)
-    let pinSquares = Pin(getColor(piece))
-    let square = getSquare(piece)
-
-    let safeMoveSquares = []
-    let safeCaptureSquares = []
-
-    if (pinSquares.some(list => Object.entries(list).length)) {
-        let listOfSquares = pinSquares.find(list => Object.entries(list).length && list.betweenPieces.includes(square))
-        
-        if (listOfSquares) {
-            safeMoveSquares = moveSquares.filter(s => listOfSquares.betweenPieces.includes(s))
-            safeCaptureSquares = captureSquares.filter(s => listOfSquares.betweenPieces.includes(s))
-        } else {
-            safeMoveSquares = moveSquares
-            safeCaptureSquares = captureSquares
-        }
-    } else {
-        safeMoveSquares = moveSquares
-        safeCaptureSquares = captureSquares
-    }
-
-    if (safeMoveSquares.length) {
-        safeMoveSquares.forEach(s => {
-            board.append(moveSquareElement(s))
-        })
-    }
-
-    if (safeCaptureSquares.length) {
-        safeCaptureSquares.forEach(s => {
-            board.append(captureSquareElement(s))
-        })
-    }
-}
-
-const moveSquareElement = (square) => {
+/**
+ * Returns an element of a move square representation
+ * @param {string} square 
+ * @returns {HTMLDivElement}
+ */
+const moveElement = square => {
     let element = document.createElement("div")
     let { top, left } = getCoordinateBySquare(square)
     element.className = "move"
@@ -51,24 +17,182 @@ const moveSquareElement = (square) => {
     return element
 }
 
-const captureSquareElement = (square) => {
-    let element = moveSquareElement(square)
+/**
+ * Returns an element of a capture square representation
+ * @param {string} square 
+ * @returns {HTMLDivElement}
+ */
+const captureElement = square => {
+    let element = moveElement(square)
     addClass(element, "capture")
     return element
 }
 
-function selectPiece(piece) {
-    unsetPassant()
+/**
+ * Returns the element of pieces to promotion
+ * @param {string} color 
+ * @returns {HTMLDivElement}
+ */
+export const promotionElement = color => {
+    let element = document.createElement("div")
+    element.className = "promotionPieces"
+    setStyle(element, (color === "white" ? "top" : "bottom"), 0)
+
+    let piecesToPromote = ["knight", "bishop", "rook", "queen"]
+
+    piecesToPromote.forEach(pieceType => {
+        let piece = document.createElement("i")
+        piece.className = `fa-solid fa-chess-${pieceType} piece ${color}`
+        setType(piece, pieceType)
+        element.append(piece)
+    })
+
+    return element
+}
+
+/**
+ * Shows the available move squares from a specified piece
+ * @param {HTMLElement} piece 
+ */
+const setMoveSquares = piece => {
+    if (getMoveSquares().length) {
+        getMoveSquares().forEach(square => !hasClass(square, "fixed") && square.remove())
+    }
+
+    let moveSquares = check ? moveScape(piece) : getAvailableMoves(piece)
+    let captureSquares = check ? captureScape(piece) : getAvailableCaptures(piece)
+
+    if (moveSquares.length) {
+        moveSquares.forEach(square => {
+            board.append(moveElement(square))
+        })
+    }
+
+    if (captureSquares.length) {
+        captureSquares.forEach(square => {
+            board.append(captureElement(square))
+        })
+    }
+}
+
+/**
+ * Moves a piece
+ * @param {HTMLElement} piece 
+ * @param {string} square 
+ */
+const movement = (piece, square) => {
+    let pieceToCapture = getPieceBySquare(square)
+    let squareOrigin = getSquare(piece)
+    let color = getColor(piece)
+    
+    if (check) {
+        let king = getPiecesByColor(color).find(p => getType(p) === "king")
+        removeClass(king, "check")
+        piecesCheck.length = 0
+        setCheck(false)
+    }
+
+    getMoveSquares().forEach(s => s.remove())
+    removeClass(piece, "selected")
+    removeClass(piece, "active")
+
+    if (isCastle(piece, square)) {
+        let [c, r] = square.split("")
+        let castleSquare = (c === "c" ? "d" : "f") + r
+        let castleRook = getPieceBySquare((c === "c" ? "a" : "h") + r)
+        
+        if (castleRook && getType(castleRook) === "rook" && isFirstMove(castleRook) && color === getColor(castleRook)) {
+            movePiece(castleRook, castleSquare)
+        }
+    }
+
+    if (isPassant) {
+        let pawnToCapture = getPieceBySquare(lastRound().squareDestination)
+        capturePiece(pawnToCapture)
+        setPassant(false)
+    }
+
+    if (pieceToCapture) {
+        capturePiece(pieceToCapture)
+    }
+
+    movePiece(piece, square)
+
+    gameHistory.push({
+        round,
+        roundPerMove,
+        pieceName: getName(piece),
+        pieceType: getType(piece),
+        pieceMove: getPieceMove(piece),
+        pieceColor: color,
+        squareOrigin,
+        squareDestination: square
+    })
+
+    if (turn === "black") {
+        incrementRound()
+    }
+
+    incrementRoundPerMove()
+    swapTurn()
+
+    checkCheck()
+
+    console.log(gameHistory)
+}
+
+/**
+ * Promotes a pawn before moving it
+ * @param {HTMLElement} piece 
+ * @param {string} square 
+ */
+const promotion = (piece, square) => {
+    board.append(promotionElement(getColor(piece)))
+
+    promotionOptions().forEach(opt => {
+        opt.addEventListener("click", ({ target }) => {
+            replaceClass(piece, "fa-chess-pawn", `fa-chess-${getType(target)}`)
+            setType(piece, getType(target))
+            setName(piece, `${getName(piece)}-promoted-to-${getType(target)}`)
+            promotionList().remove()
+            movement(piece, square)
+        })
+    })
+}
+
+/**
+ * Selects a specified piece when mouse is over
+ * @param {HTMLElement} piece 
+ */
+const selectPiece = piece => {
+    setPassant(false)
     addClass(piece, "active")
     setMoveSquares(piece)
 }
 
-function disselectPiece(piece) {
-    !hasClass(piece, "selected") && removeClass(piece, "active")
-    getMoveSquares().forEach(square => !hasClass(square, "fixed") && square.remove())
+/**
+ * Diselects a specified piece when mouse is out
+ * @param {HTMLElement} piece 
+ */
+const disselectPiece = piece => {
+    if (!hasClass(piece, "selected")) {
+        removeClass(piece, "active")
+    }
+
+    if (getMoveSquares().length) {
+        getMoveSquares().forEach(square => {
+            if (!hasClass(square, "fixed")) {
+                square.remove()
+            }
+        })
+    }
 }
 
-function defineMove(piece) {
+/**
+ * Set the selected piece to move and its available move squares when clicked
+ * @param {HTMLElement} piece 
+ */
+const defineMove = piece => {
     let color = getColor(piece)
 
     getPiecesByColor(color).forEach(p => {
@@ -86,60 +210,17 @@ function defineMove(piece) {
         getMoveSquares().forEach(square => addClass(square, "fixed"))
     }
 
-    if (getMoveSquares() && getMoveSquares().every(square => hasClass(square, "fixed"))) {
+    if (getMoveSquares().length && getMoveSquares().every(square => hasClass(square, "fixed"))) {
         getMoveSquares().forEach(square => {
             square.addEventListener("click", ({ target }) => {
-                if (getType(piece) === "pawn" && getPromotionSquares().some(s => getSquare(s) === getSquare(target))) {
-                    Promotion(piece, target)
+                if (isPromotion(piece, getSquare(target))) {
+                    promotion(piece, getSquare(target))
                 } else {
-                    movement(piece, target)
+                    movement(piece, getSquare(target))
                 }
             })
         })
     }
-}
-
-export function movement(piece, destinationSquare) {
-    let square = getSquare(destinationSquare)
-    let pieceToCapture = getPieceBySquare(square)
-    let squareOrigin = getSquare(piece)
-
-    getMoveSquares().forEach(s => s.remove())
-    removeClass(piece, "selected")
-    removeClass(piece, "active")
-
-    if (isFirstMove(piece) && getType(piece) === "king" && getCastleSquares().some(s => getSquare(s) === square)) {
-        let [c, r] = square.split("")
-        let castleSquare = (c === "c" ? "d" : "f") + r
-        let castleRook = getPieceBySquare((c === "c" ? "a" : "h") + r)
-
-        if (castleRook && getType(castleRook) === "rook" && isFirstMove(castleRook)) {
-            movePiece(castleRook, castleSquare)
-        }
-    }
-
-    if (isPassant) {
-        let pawnPassant = getPieceBySquare(gameHistory[roundPerMove - 2].square_destination)
-        capturePiece(pawnPassant)
-        unsetPassant()
-    }
-
-    pieceToCapture && capturePiece(pieceToCapture)
-    movePiece(piece, square)
-
-    gameHistory.push({
-        round: round,
-        round_per_move: roundPerMove,
-        piece_name: getName(piece),
-        piece_type: getType(piece),
-        piece_move: getPieceMove(piece),
-        square_origin: squareOrigin,
-        square_destination: getSquare(destinationSquare),
-    })
-
-    turn === "black" && incrementRound()
-    incrementRoundPerMove()
-    swapTurn()
 }
 
 export default function Moves() {
