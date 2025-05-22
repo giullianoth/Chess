@@ -130,6 +130,21 @@ export const ranks = ["1", "2", "3", "4", "5", "6", "7", "8"].reverse()
  */
 export const boardDimension = () => board.offsetWidth || board.offsetHeight
 
+/**
+ * The area of captured pieces
+ */
+export const capturedArea = getElement(".capturedPieces")
+
+/**
+ * The area of captured white pieces
+ */
+export const capturedWhitePieces = getElement("div.white", capturedArea)
+
+/**
+ * The area of captured black pieces
+ */
+export const capturedBlackPieces = getElement("div.black", capturedArea)
+
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // SQUARES
@@ -189,7 +204,7 @@ export const squareHasPiece = square => getPieces().some(piece => getSquare(piec
  * Returns all pieces in the board
  * @returns {HTMLElement[]}
  */
-export const getPieces = () => getElements(".piece")
+export const getPieces = () => getElements(".piece:not(.captured)")
 
 /**
  * Returns the pieces of a specified color
@@ -279,6 +294,11 @@ export const getPieceMove = element => parseInt(element.dataset.move)
  * @returns {HTMLElement | undefined}
  */
 export const getPieceBySquare = square => getPieces().find(piece => getSquare(piece) === square)
+
+/**
+ * The captured pieces of the game
+ */
+export const capturedPieces = []
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -409,6 +429,8 @@ export const movePiece = (piece, square) => {
  * @param {HTMLElement} piece 
  */
 export const capturePiece = piece => {
+    addClass(piece, "captured")
+    capturedPieces.push(piece)
     piece.remove()
 }
 

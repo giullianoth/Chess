@@ -1,6 +1,6 @@
 import { captureScape, checkCheck, moveScape } from "./check.js";
 import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js";
-import { addClass, board, capitalized, capturePiece, check, checkMate, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setCheck, setName, setPassant, setSquare, setStyle, setType, swapTurn, toggleClass, turn } from "./variables.js";
+import { addClass, board, capitalized, capturedBlackPieces, capturedPieces, capturedWhitePieces, capturePiece, check, checkMate, gameHistory, getColor, getCoordinateBySquare, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, round, roundPerMove, setCheck, setName, setPassant, setSquare, setStyle, setType, swapTurn, toggleClass, turn } from "./variables.js";
 
 /**
  * Returns an element of a move square representation
@@ -75,15 +75,38 @@ const setMoveSquares = piece => {
     }
 }
 
+const insertCapturedPieces = piece => {
+    if (getColor(piece) === "white") {
+        capturedWhitePieces.innerHTML = ""
+
+        capturedPieces.forEach(p => {
+            if (getColor(p) === "white") {
+                capturedWhitePieces.append(p)
+            }
+        })
+    }
+
+    if (getColor(piece) === "black") {
+        capturedBlackPieces.innerHTML = ""
+
+        capturedPieces.forEach(p => {
+            if (getColor(p) === "black") {
+                capturedBlackPieces.prepend(p)
+            }
+        })
+    }
+}
+
 /**
  * Moves a piece
  * @param {HTMLElement} piece 
  * @param {string} square 
  */
-const movement = (piece, square) => {
+const movement = (piece, square, promoted = false) => {
     let pieceToCapture = getPieceBySquare(square)
     let squareOrigin = getSquare(piece)
     let color = getColor(piece)
+    let castle = false
 
     if (check) {
         let king = getPiecesByColor(color).find(p => getType(p) === "king")
@@ -103,17 +126,20 @@ const movement = (piece, square) => {
 
         if (castleRook && getType(castleRook) === "rook" && isFirstMove(castleRook) && color === getColor(castleRook)) {
             movePiece(castleRook, castleSquare)
+            castle = true
         }
     }
 
     if (isPassant) {
         let pawnToCapture = getPieceBySquare(lastRound().squareDestination)
         capturePiece(pawnToCapture)
+        insertCapturedPieces(pawnToCapture)
         setPassant(false)
     }
 
     if (pieceToCapture) {
         capturePiece(pieceToCapture)
+        insertCapturedPieces(pieceToCapture)
     }
 
     movePiece(piece, square)
@@ -129,7 +155,11 @@ const movement = (piece, square) => {
         squareDestination: square
     })
 
-    console.log(`Round ${round}\n${capitalized(getName(piece))}${pieceToCapture ? ` x ${capitalized(getName(pieceToCapture))}` : ""} - ${square}`)
+    color === "white" && console.log(`\nROUND ${round}`)
+
+    console.log(
+        `${promoted ? "Promoted to " : ""}${capitalized(getType(piece))}${pieceToCapture ? ` x ${capitalized(getType(pieceToCapture))}` : ""} | ${squareOrigin} => ${square} ${castle ? "\nCastle" : ""}`
+    )
 
     if (turn === "black") {
         incrementRound()
@@ -154,7 +184,7 @@ const promotion = (piece, square) => {
             setType(piece, getType(target))
             setName(piece, `${getName(piece)}-promoted-to-${getType(target)}`)
             promotionList().remove()
-            movement(piece, square)
+            movement(piece, square, true)
         })
     })
 }
@@ -165,6 +195,10 @@ const promotion = (piece, square) => {
  */
 const selectPiece = piece => {
     if (checkMate) {
+        return
+    }
+
+    if (hasClass(piece, "captured")) {
         return
     }
 
@@ -179,6 +213,10 @@ const selectPiece = piece => {
  */
 const disselectPiece = piece => {
     if (checkMate) {
+        return
+    }
+
+    if (hasClass(piece, "captured")) {
         return
     }
 
@@ -201,6 +239,10 @@ const disselectPiece = piece => {
  */
 const defineMove = piece => {
     if (checkMate) {
+        return
+    }
+
+    if (hasClass(piece, "captured")) {
         return
     }
 

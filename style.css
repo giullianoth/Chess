@@ -56,6 +56,33 @@ body {
     z-index: -1;
 }
 
+.board.spinned,
+.board.spinned .indicator span,
+.board.spinned .piece {
+    transform: rotate(180deg);
+}
+
+.board.spinned .indicator.columns {
+    bottom: unset;
+    left: unset;
+    top: -40px;
+    right: 0;
+}
+
+.board.spinned .indicator.ranks {
+    top: unset;
+    left: unset;
+    bottom: 0;
+    right: -40px;
+}
+
+.board.spinned .capturedPieces {
+    top: unset;
+    left: unset;
+    bottom: -40px;
+    right: 0;
+}
+
 .indicator {
     position: absolute;
     display: grid;
@@ -80,6 +107,27 @@ body {
     justify-content: center;
     align-items: center;
     color: var(--aspargus);
+}
+
+.capturedPieces {
+    position: absolute;
+    top: -40px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.capturedPieces div.white,
+.capturedPieces div.black {
+    flex-basis: 50%;
+    display: flex;
+    column-gap: 4px;
+}
+
+.capturedPieces div.black {
+    justify-content: flex-end;
 }
 
 .square {
@@ -125,6 +173,20 @@ body {
     background-color: red;
 }
 
+.piece.captured {
+    position: static;
+    width: auto;
+    height: auto;
+    font-size: 1rem;
+    display: inline-block;
+    cursor: auto;
+}
+
+.piece.captured:hover {
+    background: none;
+    border: none;
+}
+
 .move {
     position: absolute;
     width: var(--square-dimension);
@@ -133,7 +195,7 @@ body {
     cursor: pointer;
 }
 
-.move:hover {    
+.move:hover {
     background-color: var(--pear-6);
 }
 
