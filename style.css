@@ -31,6 +31,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    flex-direction: column;
 }
 
 .board {
@@ -224,4 +225,61 @@ body {
 
 .promotionPieces .piece:hover {
     background-color: var(--icterine);
+}
+
+.defeated, .winner {
+    position: absolute;
+    width: var(--square-dimension);
+    height: var(--square-dimension);
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    padding: 4px;
+    cursor: pointer;
+}
+
+.defeated i {
+    color: white;
+    background-color: #333;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.winner i {
+    background-color: #e9b148;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.actions {
+    margin-top: 60px;
+    width: var(--board-dimension);
+    display: flex;
+}
+
+.controllers, .new {
+    flex-basis: 50%;
+    display: flex;
+    justify-content: space-evenly;
+}
+
+.actions button {
+    background: none;
+    border: none;
+    font-size: 1.2em;
+    cursor: pointer;
+    color: var(--aspargus);
+}
+
+.actions button:disabled {
+    color: #CCC;
+    cursor: not-allowed;
 }

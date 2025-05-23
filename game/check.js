@@ -2,7 +2,43 @@ import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js"
 import { bishopLine, bishopPin } from "./pieceMoves/bishop.js"
 import { queenLine, queenPin } from "./pieceMoves/queen.js"
 import { rookLine, rookPin } from "./pieceMoves/rook.js"
-import { addClass, endGame, getColor, getName, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck } from "./variables.js"
+import { addClass, board, buttonUndo, endGame, getColor, getCoordinateBySquare, getName, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck, setStyle } from "./variables.js"
+
+/**
+ * Returns the icon of defeated king
+ * @param {string} square 
+ * @returns {HTMLDivElement}
+ */
+const defeatedIcon = square => {
+    const element = document.createElement("div")
+    const icon = "<i class=\"fa-solid fa-hashtag\"></i>"
+    const { top, left } = getCoordinateBySquare(square)
+
+    element.className = "defeated"
+    element.innerHTML = icon
+    setStyle(element, "top", `${top}px`)
+    setStyle(element, "left", `${left}px`)
+
+    return element
+}
+
+/**
+ * Returns the icon of winner king
+ * @param {string} square 
+ * @returns {HTMLDivElement}
+ */
+const winnerIcon = square => {
+    const element = document.createElement("div")
+    const icon = "<i class=\"fa-solid fa-crown\"></i>"
+    const { top, left } = getCoordinateBySquare(square)
+
+    element.className = "winner"
+    element.innerHTML = icon
+    setStyle(element, "top", `${top}px`)
+    setStyle(element, "left", `${left}px`)
+
+    return element
+}
 
 /**
  * Verifies if the next player is in check
@@ -23,8 +59,13 @@ export const checkCheck = () => {
         setCheck(true)
 
         if (getPiecesByColor(color).every(piece => !moveScape(piece).length && !captureScape(piece).length)) {
+            let opponentKing = getPiecesByColor(opponent()).find(piece => getType(piece) === "king")
+
+            board.append(defeatedIcon(square))
+            board.append(winnerIcon(getSquare(opponentKing)))
             endGame()
-            console.log("Checkmate")
+
+            buttonUndo.remove()
         }
     }
 }

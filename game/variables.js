@@ -302,7 +302,36 @@ export const capturedPieces = []
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+// ACTIONS
+
+/**
+ * Button to undo a move
+ */
+export const buttonUndo = getElement(".undo")
+
+/**
+ * Button to restart the game
+ */
+export const buttonRestart = getElement(".restart")
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 // GAME FEATURES
+
+/**
+ * Returns the game informations that is saved on local storage
+ * @returns {{
+ *  round: number,
+ *  roundPerMove: number,
+ *  pieceName: string,
+ *  pieceType: string,
+ *  pieceMove: number,
+ *  pieceColor: string,
+ *  squareOrigin: string,
+ *  squareDestination: string
+ * }[] | undefined}
+ */
+export const storagedGame = () => JSON.parse(localStorage.getItem("game"))
 
 /**
  * The history informations of the game
@@ -336,6 +365,12 @@ export var turn = "white"
 export const swapTurn = () => turn = (turn === "white" ? "black" : "white")
 
 /**
+ * Resets the color turn when game restarts
+ * @returns {void}
+ */
+export const resetTurn = () => turn = "white"
+
+/**
  * Returns the color of the current player's opponent
  * @param {string} color 
  * @returns {string}
@@ -359,10 +394,34 @@ export var roundPerMove = 1
 export const incrementRound = () => round += 1
 
 /**
+ * Decrements the round by each player
+ * @returns {void}
+ */
+export const decrementRound = ()=> round -= 1
+
+/**
+ * Resets the round by each player
+ * @returns {void}
+ */
+export const resetRound = () => round = 1
+
+/**
  * Increments the round by movements
  * @returns {void}
  */
 export const incrementRoundPerMove = () => roundPerMove += 1
+
+/**
+ * Decrements the round by movements
+ * @returns {void}
+ */
+export const decrementRoundPerMove = () => roundPerMove -= 1
+
+/**
+ * Resets the round by movements
+ * @returns {void}
+ */
+export const resetRoundPerMove = () => roundPerMove = 1
 
 /**
  * Check if the movement of piece is first
@@ -427,10 +486,16 @@ export const movePiece = (piece, square) => {
 /**
  * Removes a captured piece from board
  * @param {HTMLElement} piece 
+ * @param {number} currentRoundPerMove
  */
-export const capturePiece = piece => {
+export const capturePiece = (piece, currentRoundPerMove) => {
     addClass(piece, "captured")
-    capturedPieces.push(piece)
+
+    capturedPieces.push({
+        piece: piece,
+        roundPerMove: currentRoundPerMove
+    })
+
     piece.remove()
 }
 
@@ -461,3 +526,9 @@ export const setCheck = value => check = value
  * @returns {void}
  */
 export const endGame = () => checkMate = true
+
+/**
+ * Resets the checkmate when game restarts
+ * @returns {void}
+ */
+export const resetCheckMate = () => checkMate = false
