@@ -79,7 +79,7 @@ const pawnPassantCaptures = (square, color) => {
             let [passantC, passantR] = squareDestination.split("")
             let [c, r] = square.split("")
 
-            if (passantR === r) {
+            if (passantR === r && (columns.indexOf(c) === columns.indexOf(passantC) + 1 || columns.indexOf(c) === columns.indexOf(passantC) - 1)) {
                 let rank = ranks[ranks.indexOf(passantR) + (color === "white" ? -1 : 1)]
                 capture.push(passantC + rank)
                 setPassant(true)

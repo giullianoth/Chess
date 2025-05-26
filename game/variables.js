@@ -319,7 +319,7 @@ export const buttonRestart = getElement(".restart")
 // GAME FEATURES
 
 /**
- * Returns the game informations that is saved on local storage
+ * Returns the game informations those is saved on local storage
  * @returns {{
  *  round: number,
  *  roundPerMove: number,
@@ -510,7 +510,7 @@ export var check = false
 export var checkMate = false
 
 /**
- * Pieces that are attacking the opponent king
+ * Pieces those are attacking the opponent king
  */
 export const piecesCheck = []
 

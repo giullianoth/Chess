@@ -1,7 +1,7 @@
 import { captureScape, checkCheck, moveScape } from "./check.js";
 import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js";
 import Pieces from "./pieces.js";
-import { addClass, board, buttonRestart, buttonUndo, capitalized, capturedArea, capturedBlackPieces, capturedPieces, capturedWhitePieces, capturePiece, check, checkMate, decrementRound, decrementRoundPerMove, gameHistory, getColor, getCoordinateBySquare, getElement, getElements, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetRound, resetRoundPerMove, resetTurn, round, roundPerMove, setCheck, setMove, setName, setPassant, setSquare, setStyle, setType, swapTurn, toggleClass, turn } from "./variables.js";
+import { addClass, board, buttonRestart, buttonUndo, capitalized, capturedArea, capturedBlackPieces, capturedPieces, capturedWhitePieces, capturePiece, check, checkMate, decrementRound, decrementRoundPerMove, gameHistory, getColor, getCoordinateBySquare, getElement, getElements, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetRound, resetRoundPerMove, resetTurn, round, roundPerMove, setCheck, setMove, setName, setPassant, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
 
 /**
  * Returns an element of a move square representation
@@ -108,10 +108,11 @@ const insertCapturedPieces = piece => {
  * @param {string} square 
  */
 const movement = (piece, square, promoted = false) => {
-    let pieceToCapture = getPieceBySquare(square)
+    let pieceToCapture = null
     let squareOrigin = getSquare(piece)
     let color = getColor(piece)
     let castle = false
+    let passant = false
 
     if (check) {
         let king = getPiecesByColor(color).find(p => getType(p) === "king")
@@ -136,13 +137,15 @@ const movement = (piece, square, promoted = false) => {
     }
 
     if (isPassant) {
-        let pawnToCapture = getPieceBySquare(lastRound().squareDestination)
-        capturePiece(pawnToCapture, roundPerMove)
-        insertCapturedPieces(pawnToCapture)
+        pieceToCapture = getPieceBySquare(lastRound().squareDestination)
+        capturePiece(pieceToCapture, roundPerMove)
+        insertCapturedPieces(pieceToCapture)
         setPassant(false)
+        passant = true
     }
 
-    if (pieceToCapture) {
+    if (squareHasPiece(square)) {
+        pieceToCapture = getPieceBySquare(square)
         capturePiece(pieceToCapture, roundPerMove)
         insertCapturedPieces(pieceToCapture)
     }
@@ -173,7 +176,7 @@ const movement = (piece, square, promoted = false) => {
     checkCheck()
 
     console.log(
-        `${promoted ? "Promoted to " : ""}${capitalized(getType(piece))}${pieceToCapture ? ` x ${capitalized(getType(pieceToCapture))}` : ""} | ${squareOrigin} => ${square} ${castle ? "\nCastle" : ""}${check && !checkMate ? "\nCheck" : ""}${checkMate ? "\nCheckmate" : ""}`
+        `${promoted ? "Promoted to " : ""}${capitalized(getType(piece))}${pieceToCapture ? ` x ${capitalized(getType(pieceToCapture))}` : ""} | ${squareOrigin} => ${square} ${castle ? "\nCastle" : ""}${passant ? "\nEn Passant" : ""}${check && !checkMate ? "\nCheck" : ""}${checkMate ? "\nCheckmate" : ""}`
     )
 
     if (gameHistory.length) {
