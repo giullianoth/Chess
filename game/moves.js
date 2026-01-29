@@ -182,6 +182,11 @@ const movement = (piece, square, promoted = false) => {
     }
 
     currentGameInfo.check = check
+
+    if (checkMate) {
+        currentGameInfo.checkMate = checkMate
+    }
+
     gameHistory.push(currentGameInfo)
 
     if (gameHistory.length) {
@@ -397,7 +402,10 @@ export default function Moves() {
         piece.addEventListener("mouseleave", ({ target }) => getColor(target) === turn && disselectPiece(target))
     })
 
-    removeClass(buttonUndo, "hidden")
+    if (!checkMate) {
+        removeClass(buttonUndo, "hidden")
+    }
+
     buttonUndo.addEventListener("click", undoMove)
     buttonRestart.addEventListener("click", restartGame)
 }

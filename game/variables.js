@@ -335,6 +335,7 @@ const gameKey = "chess-game"
  *  enPassant: boolean,
  *  turn: string,
  *  check: boolean,
+ *  checkMate: boolean,
  *  currentPieces: {
  *      type: string,
  *      name: string,
@@ -390,6 +391,7 @@ export const gameHistory = []
  *  enPassant: boolean,
  *  turn: string,
  *  check: boolean,
+ *  checkMate: boolean,
  *  currentPieces: {
  *      type: string,
  *      name: string,
@@ -638,6 +640,42 @@ export const endGame = () => checkMate = true
  * @returns {void}
  */
 export const resetCheckMate = () => checkMate = false
+
+/**
+ * Returns the icon of defeated king
+ * @param {string} square 
+ * @returns {HTMLDivElement}
+ */
+export const defeatedIcon = square => {
+    const element = document.createElement("div")
+    const icon = "<i class=\"fa-solid fa-hashtag\"></i>"
+    const { top, left } = getCoordinateBySquare(square)
+
+    element.className = "defeated"
+    element.innerHTML = icon
+    setStyle(element, "top", `${top}px`)
+    setStyle(element, "left", `${left}px`)
+
+    return element
+}
+
+/**
+ * Returns the icon of winner king
+ * @param {string} square 
+ * @returns {HTMLDivElement}
+ */
+export const winnerIcon = square => {
+    const element = document.createElement("div")
+    const icon = "<i class=\"fa-solid fa-crown\"></i>"
+    const { top, left } = getCoordinateBySquare(square)
+
+    element.className = "winner"
+    element.innerHTML = icon
+    setStyle(element, "top", `${top}px`)
+    setStyle(element, "left", `${left}px`)
+
+    return element
+}
 
 /**
  * Shows in browser console the status of the current round

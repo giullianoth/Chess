@@ -1,5 +1,5 @@
 import { setPiecesCheck } from "./check.js"
-import { addClass, board, buttonUndo, capturedPieces, gameHistory, getColor, getCoordinateBySquare, getPieces, getSquare, getType, insertCapturedPieces, opponent, setCheck, setColor, setMove, setName, setRound, setRoundPerMove, setSquare, setStyle, setTurn, setType, showRoundStatus, storagedGame, turn } from "./variables.js"
+import { addClass, board, buttonUndo, capturedPieces, defeatedIcon, endGame, gameHistory, getColor, getCoordinateBySquare, getPieces, getSquare, getType, insertCapturedPieces, opponent, setCheck, setColor, setMove, setName, setRound, setRoundPerMove, setSquare, setStyle, setTurn, setType, showRoundStatus, storagedGame, turn, winnerIcon } from "./variables.js"
 
 /**
  * The pieces list of each player
@@ -144,7 +144,6 @@ export default function Pieces() {
         setRound(lastSavedRound.round + (lastSavedRound.pieceColor === "black" ? 1 : 0))
         setRoundPerMove(lastSavedRound.roundPerMove + 1)
         setTurn(opponent(lastSavedRound.pieceColor))
-        setCheck(lastSavedRound.check)
 
         lastSavedRound.currentPieces.forEach(pieceInfo => {
             const piece = existingPieceElement(
@@ -194,6 +193,21 @@ export default function Pieces() {
                 capturedPieces.find(pieceInfo => pieceInfo.roundPerMove === gameInfo.roundPerMove)?.piece
                 ?? null
 
+            setCheck(gameInfo.check)
+
+            if (gameInfo.checkMate) {
+                const king = getPieces().find(piece => getType(piece) === "king" && getColor(piece) === opponent())
+                const kingInCheck = getPieces().find(piece => getType(piece) === "king" && getColor(piece) === turn)
+
+                addClass(king, "winner")
+                board.append(winnerIcon(getSquare(king)))
+                board.append(defeatedIcon(getSquare(kingInCheck)))
+                getPieces().forEach(piece => addClass(piece, "afterEndGame"))
+                addClass(buttonUndo, "hidden")
+                
+                endGame()
+            }
+
             showRoundStatus(
                 gameInfo.pieceColor,
                 gameInfo.promoted,
@@ -211,7 +225,6 @@ export default function Pieces() {
             const kingInCheck = getPieces().find(piece => getType(piece) === "king" && getColor(piece) === turn)
             addClass(kingInCheck, "check")
             setPiecesCheck(getSquare(kingInCheck))
-            setCheck(true)
         }
 
         buttonUndo.removeAttribute("disabled")

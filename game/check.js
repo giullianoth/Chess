@@ -2,43 +2,7 @@ import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js"
 import { bishopLine, bishopPin } from "./pieceMoves/bishop.js"
 import { queenLine, queenPin } from "./pieceMoves/queen.js"
 import { rookLine, rookPin } from "./pieceMoves/rook.js"
-import { addClass, board, buttonUndo, endGame, getColor, getCoordinateBySquare, getPieces, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck, setStyle } from "./variables.js"
-
-/**
- * Returns the icon of defeated king
- * @param {string} square 
- * @returns {HTMLDivElement}
- */
-const defeatedIcon = square => {
-    const element = document.createElement("div")
-    const icon = "<i class=\"fa-solid fa-hashtag\"></i>"
-    const { top, left } = getCoordinateBySquare(square)
-
-    element.className = "defeated"
-    element.innerHTML = icon
-    setStyle(element, "top", `${top}px`)
-    setStyle(element, "left", `${left}px`)
-
-    return element
-}
-
-/**
- * Returns the icon of winner king
- * @param {string} square 
- * @returns {HTMLDivElement}
- */
-const winnerIcon = square => {
-    const element = document.createElement("div")
-    const icon = "<i class=\"fa-solid fa-crown\"></i>"
-    const { top, left } = getCoordinateBySquare(square)
-
-    element.className = "winner"
-    element.innerHTML = icon
-    setStyle(element, "top", `${top}px`)
-    setStyle(element, "left", `${left}px`)
-
-    return element
-}
+import { addClass, board, buttonUndo, defeatedIcon, endGame, getColor, getPieces, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck, winnerIcon } from "./variables.js"
 
 /**
  * Sets the list of pieces those attack the opponent king
