@@ -14,7 +14,7 @@ export const getElement = (selector, parentElement = null) => (parentElement ?? 
  * @param {HTMLElement | null} parentElement 
  * @returns {HTMLElement[] | undefined}
  */
-export const getElements = (selector, parentElement = null) => [...(parentElement ?? document).querySelectorAll(selector)]
+export const getElements = (selector, parentElement = null) => Array.from((parentElement ?? document).querySelectorAll(selector))
 
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -317,9 +317,10 @@ export const buttonRestart = getElement(".restart")
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // GAME FEATURES
+const gameKey = "chess-game"
 
 /**
- * Returns the game informations those is saved on local storage
+ * Returns the game informations those is saved on browser local storage
  * @returns {{
  *  round: number,
  *  roundPerMove: number,
@@ -328,10 +329,44 @@ export const buttonRestart = getElement(".restart")
  *  pieceMove: number,
  *  pieceColor: string,
  *  squareOrigin: string,
- *  squareDestination: string
+ *  squareDestination: string,
+ *  castle: boolean,
+ *  promoted: boolean,
+ *  enPassant: boolean,
+ *  turn: string,
+ *  check: boolean,
+ *  currentPieces: {
+ *      type: string,
+ *      name: string,
+ *      color: string,
+ *      square: string,
+ *      moves: number
+ *  }[],
+ *  capturedPieces: {
+ *      piece: {
+ *          type: string,
+ *          name: string,
+ *          color: string,
+ *          square: string,
+ *          moves: number
+ *      },
+ *      roundPerMove: number
+ *  }[]
  * }[] | undefined}
  */
-export const storagedGame = () => JSON.parse(localStorage.getItem("game"))
+export const storagedGame = () => JSON.parse(localStorage.getItem(gameKey))
+
+/**
+ * Saves the game informations on browser local storage
+ * @returns {void}
+ */
+export const storageGame = () => localStorage.setItem(gameKey, JSON.stringify(gameHistory))
+
+/**
+ * Clear the game informations on browser local storage
+ * @returns {void}
+ */
+export const clearStoragedGame = () => localStorage.removeItem(gameKey)
 
 /**
  * The history informations of the game
@@ -340,6 +375,7 @@ export const gameHistory = []
 
 /**
  * Returns the game info of last round per move
+ * @param {number} index
  * @returns {{
  *  round: number,
  *  roundPerMove: number,
@@ -348,10 +384,32 @@ export const gameHistory = []
  *  pieceMove: number,
  *  pieceColor: string,
  *  squareOrigin: string,
- *  squareDestination: string
+ *  squareDestination: string,
+ *  castle: boolean,
+ *  promoted: boolean,
+ *  enPassant: boolean,
+ *  turn: string,
+ *  check: boolean,
+ *  currentPieces: {
+ *      type: string,
+ *      name: string,
+ *      color: string,
+ *      square: string,
+ *      moves: number
+ *  }[],
+ *  capturedPieces: {
+ *      piece: {
+ *          type: string,
+ *          name: string,
+ *          color: string,
+ *          square: string,
+ *          moves: number
+ *      },
+ *      roundPerMove: number
+ *  }[]
  * } | undefined}
  */
-export const lastRound = () => gameHistory[roundPerMove - 2]
+export const lastRound = (index = roundPerMove) => gameHistory[index - 2]
 
 /**
  * The current turn of the game
@@ -363,6 +421,13 @@ export var turn = "white"
  * @returns {void}
  */
 export const swapTurn = () => turn = (turn === "white" ? "black" : "white")
+
+/**
+ * Sets the turn with a specified value
+ * @param {string} color 
+ * @returns {void}
+ */
+export const setTurn = color => turn = color
 
 /**
  * Resets the color turn when game restarts
@@ -397,7 +462,14 @@ export const incrementRound = () => round += 1
  * Decrements the round by each player
  * @returns {void}
  */
-export const decrementRound = ()=> round -= 1
+export const decrementRound = () => round -= 1
+
+/**
+ * Sets the round from a specified value
+ * @param {number} roundValue 
+ * @returns {void}
+ */
+export const setRound = roundValue => round = roundValue
 
 /**
  * Resets the round by each player
@@ -416,6 +488,13 @@ export const incrementRoundPerMove = () => roundPerMove += 1
  * @returns {void}
  */
 export const decrementRoundPerMove = () => roundPerMove -= 1
+
+/**
+ * Sets the round by movements from a specified value
+ * @param {number} roundValue 
+ * @returns {void}
+ */
+export const setRoundPerMove = roundValue => roundPerMove = roundValue
 
 /**
  * Resets the round by movements
@@ -474,11 +553,12 @@ export const setPassant = value => isPassant = value
  * Moves a piece to a specified square
  * @param {HTMLElement} piece 
  * @param {string} square 
+ * @param {boolean} undone
  */
-export const movePiece = (piece, square) => {
+export const movePiece = (piece, square, undoneMove = false) => {
     let { top, left } = getCoordinateBySquare(square)
     setSquare(piece, square)
-    setMove(piece, getPieceMove(piece) + 1)
+    setMove(piece, undoneMove ? getPieceMove(piece) - 1 : getPieceMove(piece) + 1)
     setStyle(piece, "top", `${top}px`)
     setStyle(piece, "left", `${left}px`)
 }
@@ -497,6 +577,32 @@ export const capturePiece = (piece, currentRoundPerMove) => {
     })
 
     piece.remove()
+}
+
+/**
+ * Inserts a captured piece in the list of captured pieces
+ * @param {HTMLElement} piece 
+ */
+export const insertCapturedPieces = piece => {
+    if (getColor(piece) === "white") {
+        capturedWhitePieces.innerHTML = ""
+
+        capturedPieces.forEach(p => {
+            if (getColor(p.piece) === "white") {
+                capturedWhitePieces.append(p.piece)
+            }
+        })
+    }
+
+    if (getColor(piece) === "black") {
+        capturedBlackPieces.innerHTML = ""
+
+        capturedPieces.forEach(p => {
+            if (getColor(p.piece) === "black") {
+                capturedBlackPieces.prepend(p.piece)
+            }
+        })
+    }
 }
 
 /**
@@ -532,3 +638,32 @@ export const endGame = () => checkMate = true
  * @returns {void}
  */
 export const resetCheckMate = () => checkMate = false
+
+/**
+ * Shows in browser console the status of the current round
+ * @param {string} color 
+ * @param {boolean} promoted 
+ * @param {string} piece 
+ * @param {string} capturedPiece 
+ * @param {string} squareOrigin 
+ * @param {string} squareDestination 
+ * @param {boolean} castle 
+ * @param {boolean} enPassant 
+ */
+export const showRoundStatus = (color, promoted, piece, capturedPiece, squareOrigin, squareDestination, castle, enPassant, currentRound = round) => {
+    if (color === "white") {
+        console.log(`\nROUND ${currentRound}`)
+    }
+
+    console.log(
+        promoted ? "Promoted to" : "",
+        capitalized(getType(piece)),
+        capturedPiece ? `x ${capitalized(getType(capturedPiece))}` : "",
+        "|",
+        `${squareOrigin} => ${squareDestination}`,
+        castle ? "\nCastle" : "",
+        enPassant ? "\nEn Passant" : "",
+        check && !checkMate ? "\nCheck" : "",
+        checkMate ? "\nCheckmate" : ""
+    )
+}

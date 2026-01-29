@@ -1,7 +1,7 @@
 import { captureScape, checkCheck, moveScape } from "./check.js";
 import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js";
 import Pieces from "./pieces.js";
-import { addClass, board, buttonRestart, buttonUndo, capitalized, capturedArea, capturedBlackPieces, capturedPieces, capturedWhitePieces, capturePiece, check, checkMate, decrementRound, decrementRoundPerMove, gameHistory, getColor, getCoordinateBySquare, getElement, getElements, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetRound, resetRoundPerMove, resetTurn, round, roundPerMove, setCheck, setMove, setName, setPassant, setSquare, setStyle, setType, squareHasPiece, swapTurn, toggleClass, turn } from "./variables.js";
+import { addClass, board, buttonRestart, buttonUndo, capturedBlackPieces, capturedPieces, capturedWhitePieces, capturePiece, check, checkMate, clearStoragedGame, decrementRound, decrementRoundPerMove, gameHistory, getColor, getCoordinateBySquare, getElement, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, insertCapturedPieces, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetRound, resetRoundPerMove, resetTurn, round, roundPerMove, setCheck, setName, setPassant, setSquare, setStyle, setType, showRoundStatus, squareHasPiece, storageGame, swapTurn, toggleClass, turn } from "./variables.js";
 
 /**
  * Returns an element of a move square representation
@@ -77,32 +77,6 @@ const setMoveSquares = piece => {
 }
 
 /**
- * Inserts a captured piece in the list of captured pieces
- * @param {HTMLElement} piece 
- */
-const insertCapturedPieces = piece => {
-    if (getColor(piece) === "white") {
-        capturedWhitePieces.innerHTML = ""
-
-        capturedPieces.forEach(p => {
-            if (getColor(p.piece) === "white") {
-                capturedWhitePieces.append(p.piece)
-            }
-        })
-    }
-
-    if (getColor(piece) === "black") {
-        capturedBlackPieces.innerHTML = ""
-
-        capturedPieces.forEach(p => {
-            if (getColor(p.piece) === "black") {
-                capturedBlackPieces.prepend(p.piece)
-            }
-        })
-    }
-}
-
-/**
  * Moves a piece
  * @param {HTMLElement} piece 
  * @param {string} square 
@@ -152,7 +126,7 @@ const movement = (piece, square, promoted = false) => {
 
     movePiece(piece, square)
 
-    gameHistory.push({
+    const currentGameInfo = {
         round,
         roundPerMove,
         pieceName: getName(piece),
@@ -160,11 +134,11 @@ const movement = (piece, square, promoted = false) => {
         pieceMove: getPieceMove(piece),
         pieceColor: color,
         squareOrigin,
-        squareDestination: square
-    })
-
-    if (color === "white") {
-        console.log(`\nROUND ${round}`)
+        squareDestination: square,
+        castle,
+        promoted,
+        enPassant: passant,
+        turn
     }
 
     if (turn === "black") {
@@ -175,15 +149,48 @@ const movement = (piece, square, promoted = false) => {
     swapTurn()
     checkCheck()
 
-    console.log(
-        `${promoted ? "Promoted to " : ""}${capitalized(getType(piece))}${pieceToCapture ? ` x ${capitalized(getType(pieceToCapture))}` : ""} | ${squareOrigin} => ${square} ${castle ? "\nCastle" : ""}${passant ? "\nEn Passant" : ""}${check && !checkMate ? "\nCheck" : ""}${checkMate ? "\nCheckmate" : ""}`
+    showRoundStatus(
+        color,
+        promoted,
+        piece,
+        pieceToCapture,
+        squareOrigin,
+        square,
+        castle,
+        passant
     )
+
+    currentGameInfo.currentPieces = getPieces().map(p => ({
+        type: getType(p),
+        name: getName(p),
+        color: getColor(p),
+        square: getSquare(p),
+        moves: getPieceMove(p)
+    }))
+
+    if (pieceToCapture) {
+        currentGameInfo.capturedPieces = capturedPieces.map(pieceInfo => ({
+            piece: {
+                type: getType(pieceInfo.piece),
+                name: getName(pieceInfo.piece),
+                color: getColor(pieceInfo.piece),
+                square: getSquare(pieceInfo.piece),
+                moves: getPieceMove(pieceInfo.piece)
+            },
+            roundPerMove: pieceInfo.roundPerMove
+        }))
+    }
+
+    currentGameInfo.check = check
+    gameHistory.push(currentGameInfo)
 
     if (gameHistory.length) {
         buttonUndo.removeAttribute("disabled")
     } else {
         buttonUndo.setAttribute("disabled", true)
     }
+
+    storageGame()
 }
 
 /**
@@ -210,11 +217,7 @@ const promotion = (piece, square) => {
  * @param {HTMLElement} piece 
  */
 const selectPiece = piece => {
-    if (checkMate) {
-        return
-    }
-
-    if (hasClass(piece, "captured")) {
+    if (checkMate || hasClass(piece, "captured")) {
         return
     }
 
@@ -228,11 +231,7 @@ const selectPiece = piece => {
  * @param {HTMLElement} piece 
  */
 const disselectPiece = piece => {
-    if (checkMate) {
-        return
-    }
-
-    if (hasClass(piece, "captured")) {
+    if (checkMate || hasClass(piece, "captured")) {
         return
     }
 
@@ -254,11 +253,7 @@ const disselectPiece = piece => {
  * @param {HTMLElement} piece 
  */
 const defineMove = piece => {
-    if (checkMate) {
-        return
-    }
-
-    if (hasClass(piece, "captured")) {
+    if (checkMate || hasClass(piece, "captured")) {
         return
     }
 
@@ -293,7 +288,7 @@ const defineMove = piece => {
 }
 
 /**
- * Undo a piece movement
+ * Undo lhe last piece movement
  * @returns {void}
  */
 const undoMove = () => {
@@ -304,8 +299,7 @@ const undoMove = () => {
     let piece = getPiecesByColor(lastRound().pieceColor).find(p => getName(p) === lastRound().pieceName)
     let lastCapturedPieceInfo = capturedPieces.find(info => info.roundPerMove === lastRound().roundPerMove)
 
-    movePiece(piece, lastRound().squareOrigin)
-    setMove(piece, getPieceMove(piece) - 2)
+    movePiece(piece, lastRound().squareOrigin, true)
 
     if (lastCapturedPieceInfo) {
         let lastCapturedPiece = lastCapturedPieceInfo.piece
@@ -315,8 +309,30 @@ const undoMove = () => {
         capturedPieces.pop()
     }
 
+    if (lastRound().castle) {
+        let [c, r] = lastRound().squareDestination
+        const rookCastle = getPieceBySquare((c === "c" ? "d" : "f") + r)
+        const squareToReturn = (c === "c" ? "a" : "h") + r
+        movePiece(rookCastle, squareToReturn, true)
+    }
+
+    if (lastRound().promoted) {
+        const type = getType(piece)
+        const name = getName(piece).slice(0, type.length - 1)
+        replaceClass(piece, `fa-chess-${type}`, "fa-chess-pawn")
+        setType(piece, "pawn")
+        setName(piece, name)
+    }
+
     if (lastRound().pieceColor === "black" && round > 1) {
         decrementRound()
+    }
+
+    if (check) {
+        const kingInCheck = getPieces().find(p => hasClass(p, "check") && getType(p) === "king")
+        removeClass(kingInCheck, "check")
+        piecesCheck.length = 0
+        setCheck(false)
     }
 
     swapTurn()
@@ -327,6 +343,7 @@ const undoMove = () => {
         buttonUndo.setAttribute("disabled", true)
     }
 
+    storageGame()
     console.log("\nUNDONE MOVE")
 }
 
@@ -335,9 +352,6 @@ const undoMove = () => {
  * @returns {void}
  */
 const restartGame = () => {
-    let defeated = getElement(".defeated")
-    let winner = getElement(".winner")
-
     if (!checkMate) {
         let confirmRestart = window.confirm("Deseja iniciar um novo jogo?")
 
@@ -345,6 +359,9 @@ const restartGame = () => {
             return
         }
     }
+
+    let defeated = getElement(".defeated")
+    let winner = getElement("div.winner")
 
     if (defeated) {
         defeated.remove()
@@ -355,6 +372,8 @@ const restartGame = () => {
     }
 
     getPieces().forEach(piece => piece.remove())
+    capturedWhitePieces.innerHTML = ""
+    capturedBlackPieces.innerHTML = ""
     capturedPieces.length = 0
     gameHistory.length = 0
     piecesCheck.length = 0
@@ -365,6 +384,7 @@ const restartGame = () => {
     resetRoundPerMove()
     resetTurn()
 
+    clearStoragedGame()
     Pieces()
     Moves()
     console.clear()
@@ -377,6 +397,7 @@ export default function Moves() {
         piece.addEventListener("mouseleave", ({ target }) => getColor(target) === turn && disselectPiece(target))
     })
 
+    removeClass(buttonUndo, "hidden")
     buttonUndo.addEventListener("click", undoMove)
     buttonRestart.addEventListener("click", restartGame)
 }

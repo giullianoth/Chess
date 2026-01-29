@@ -1,4 +1,5 @@
-import { board, getCoordinateBySquare, setColor, setMove, setName, setSquare, setStyle, setType } from "./variables.js"
+import { setPiecesCheck } from "./check.js"
+import { addClass, board, buttonUndo, capturedPieces, gameHistory, getColor, getCoordinateBySquare, getPieces, getSquare, getType, insertCapturedPieces, opponent, setCheck, setColor, setMove, setName, setRound, setRoundPerMove, setSquare, setStyle, setTurn, setType, showRoundStatus, storagedGame, turn } from "./variables.js"
 
 /**
  * The pieces list of each player
@@ -108,7 +109,115 @@ const pieceElement = (pieceName, color) => {
     return element
 }
 
+/**
+ * Returns the HTML element of an existing piece from browser local storage
+ * @param {string} name 
+ * @param {string} color 
+ * @param {string} type 
+ * @param {string} square 
+ * @param {number} moves 
+ * @returns {HTMLElement}
+ */
+const existingPieceElement = (name, color, type, square, moves) => {
+    let element = document.createElement("i")
+    let { top, left } = getCoordinateBySquare(square)
+
+    element.className = `fa-solid fa-chess-${type} piece ${color}`
+    setType(element, type)
+    setName(element, name)
+    setColor(element, color)
+    setSquare(element, square)
+    setMove(element, moves)
+
+    setStyle(element, "top", `${top}px`)
+    setStyle(element, "left", `${left}px`)
+
+    return element
+}
+
 export default function Pieces() {
+    const savedGame = storagedGame()
+
+    if (savedGame && savedGame.length) {
+        const lastSavedRound = savedGame[savedGame.length - 1]
+
+        setRound(lastSavedRound.round + (lastSavedRound.pieceColor === "black" ? 1 : 0))
+        setRoundPerMove(lastSavedRound.roundPerMove + 1)
+        setTurn(opponent(lastSavedRound.pieceColor))
+        setCheck(lastSavedRound.check)
+
+        lastSavedRound.currentPieces.forEach(pieceInfo => {
+            const piece = existingPieceElement(
+                pieceInfo.name,
+                pieceInfo.color,
+                pieceInfo.type,
+                pieceInfo.square,
+                pieceInfo.moves
+            )
+
+            board.append(piece)
+        })
+
+        if (lastSavedRound.capturedPieces && lastSavedRound.capturedPieces.length) {
+            lastSavedRound.capturedPieces.forEach(captureInfo => {
+                const piece = existingPieceElement(
+                    captureInfo.piece.name,
+                    captureInfo.piece.color,
+                    captureInfo.piece.type,
+                    captureInfo.piece.square,
+                    captureInfo.piece.moves
+                )
+
+                addClass(piece, "captured")
+
+                capturedPieces.push({
+                    piece,
+                    roundPerMove: captureInfo.roundPerMove
+                })
+
+                insertCapturedPieces(piece)
+            })
+        }
+
+        savedGame.forEach(gameInfo => {
+            gameHistory.push(gameInfo)
+
+            const currentPiece = existingPieceElement(
+                gameInfo.pieceName,
+                gameInfo.pieceColor,
+                gameInfo.pieceType,
+                gameInfo.squareDestination,
+                gameInfo.pieceMove
+            )
+
+            const capturedPiece =
+                capturedPieces.find(pieceInfo => pieceInfo.roundPerMove === gameInfo.roundPerMove)?.piece
+                ?? null
+
+            showRoundStatus(
+                gameInfo.pieceColor,
+                gameInfo.promoted,
+                currentPiece,
+                capturedPiece,
+                gameInfo.squareOrigin,
+                gameInfo.squareDestination,
+                gameInfo.castle,
+                gameInfo.enPassant,
+                gameInfo.round
+            )
+        })
+
+        if (lastSavedRound.check) {
+            const kingInCheck = getPieces().find(piece => getType(piece) === "king" && getColor(piece) === turn)
+            addClass(kingInCheck, "check")
+            setPiecesCheck(getSquare(kingInCheck))
+            setCheck(true)
+        }
+
+        buttonUndo.removeAttribute("disabled")
+        return
+    }
+
     piecesList.forEach(pieceName => {
         board.append(pieceElement(pieceName, "white"))
         board.append(pieceElement(pieceName, "black"))

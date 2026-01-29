@@ -2,7 +2,7 @@ import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js"
 import { bishopLine, bishopPin } from "./pieceMoves/bishop.js"
 import { queenLine, queenPin } from "./pieceMoves/queen.js"
 import { rookLine, rookPin } from "./pieceMoves/rook.js"
-import { addClass, board, buttonUndo, endGame, getColor, getCoordinateBySquare, getName, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck, setStyle } from "./variables.js"
+import { addClass, board, buttonUndo, endGame, getColor, getCoordinateBySquare, getPieces, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck, setStyle } from "./variables.js"
 
 /**
  * Returns the icon of defeated king
@@ -41,6 +41,18 @@ const winnerIcon = square => {
 }
 
 /**
+ * Sets the list of pieces those attack the opponent king
+ * @param {string} square 
+ */
+export const setPiecesCheck = (square) => {
+    getPiecesByColor(opponent()).forEach(piece => {
+        if (getAvailableCaptures(piece).length && getAvailableCaptures(piece).includes(square)) {
+            piecesCheck.push(piece)
+        }
+    })
+}
+
+/**
  * Verifies if the next player is in check
  */
 export const checkCheck = () => {
@@ -48,11 +60,7 @@ export const checkCheck = () => {
     let square = getSquare(king)
     let color = getColor(king)
 
-    getPiecesByColor(opponent()).forEach(piece => {
-        if (getAvailableCaptures(piece).length && getAvailableCaptures(piece).includes(square)) {
-            piecesCheck.push(piece)
-        }
-    })
+    setPiecesCheck(square)
 
     if (piecesCheck.length) {
         addClass(king, "check")
@@ -63,9 +71,11 @@ export const checkCheck = () => {
 
             board.append(defeatedIcon(square))
             board.append(winnerIcon(getSquare(opponentKing)))
+            getPieces().forEach(piece => addClass(piece, "afterEndGame"))
+            addClass(opponentKing, "winner")
             endGame()
 
-            buttonUndo.remove()
+            addClass(buttonUndo, "hidden")
         }
     }
 }

@@ -6,6 +6,7 @@
     --icterine: #F5F568;
     --persian-red: #C8342F;
     --jet: #333;
+    --malachite: #0DE24D;
 
     --pear-6: #b9cd3799;
     --persian-red-6: #C8342F99;
@@ -61,8 +62,8 @@ body {
 .board.spinned,
 .board.spinned .indicator span,
 .board.spinned .piece,
-.defeated,
-.winner {
+.board.spinned .defeated,
+.board.spinned .winner {
     transform: rotate(180deg);
 }
 
@@ -177,6 +178,12 @@ body {
     background-color: red;
 }
 
+.piece.winner {
+    background-color: var(--malachite);
+    justify-content: center !important;
+    align-items: center !important;
+}
+
 .piece.captured {
     position: static;
     width: auto;
@@ -189,6 +196,10 @@ body {
 .piece.captured:hover {
     background: none;
     border: none;
+}
+
+.piece.afterEndGame {
+    cursor: default;
 }
 
 .move {
@@ -238,7 +249,6 @@ body {
     justify-content: flex-end;
     align-items: flex-start;
     padding: 4px;
-    cursor: pointer;
 }
 
 .defeated i {
@@ -285,4 +295,8 @@ body {
 .actions button:disabled {
     color: #CCC;
     cursor: not-allowed;
+}
+
+.actions .undo.hidden {
+    display: none;
 }
