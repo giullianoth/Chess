@@ -224,6 +224,19 @@ export const getPieces = () => getElements(".piece:not(.captured)")
 export const getPiecesByColor = (color = turn) => getPieces().filter(piece => getColor(piece) === color)
 
 /**
+ * Returns the captured pieces
+ * @returns {HTMLElement[] | undefined}
+ */
+export const getCapturedPieces = () => getElements(".piece.captured")
+
+/**
+ * Returns the capturedpieces of a specified color
+ * @param {string} color 
+ * @returns {HTMLElement[] | undefined}
+ */
+export const getCapturedPiecesByColor = (color = turn) => getCapturedPieces().filter(piece => getColor(piece) === color)
+
+/**
  * Sets the square in a HTML data attribute of an element
  * @param {HTMLElement} element 
  * @param {string} square 

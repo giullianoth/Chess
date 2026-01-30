@@ -1,5 +1,5 @@
 import { pieceElement } from "./pieces.js"
-import { addClass, backwardsRoundButton, controllersArea, endGameIcons, firstRoundButton, forwardsRoundButton, gameHistory, getColor, getName, getPieces, getSquare, getType, lastRoundButton, movePieceOnReview, piecesList, removeClass, reviewButton, reviewButtonElement, reviewControllersElement, roundPerMove } from "./variables.js"
+import { addClass, backwardsRoundButton, board, controllersArea, endGameIcons, firstRoundButton, forwardsRoundButton, gameHistory, getCapturedPiecesByColor, getColor, getName, getPieces, getPiecesByColor, getSquare, getType, insertCapturedPieces, lastRoundButton, movePieceOnReview, piecesList, removeClass, reviewButton, reviewButtonElement, reviewControllersElement, roundPerMove } from "./variables.js"
 
 /**
  * The last game history after checkmate
@@ -102,9 +102,23 @@ const setCurrentRoundIndex = index => currentRoundIndex = index
  */
 const goToFirstRound = () => {
     const firstRound = roundsToReview()[0]
+    const lastCapturedPieces = roundsToReview()[roundsToReview().length - 1].capturedPieces
+
+    if (lastCapturedPieces && lastCapturedPieces.length) {
+        lastCapturedPieces.forEach(pieceInfo => {
+            const capturedPieceColor = pieceInfo.piece.color
+            const capturedPieceName = pieceInfo.piece.name
+            const capturedPiece = getCapturedPiecesByColor(capturedPieceColor).find(piece => getName(piece) === capturedPieceName)
+
+            capturedPiece.remove()
+            removeClass(capturedPiece, "captured")
+            board.append(capturedPiece)
+        })
+    }
 
     firstRound.currentPieces.forEach(pieceInfo => {
         const piece = getPieces().find(p => getName(p) === pieceInfo.name && getColor(p) === pieceInfo.color)
+        console.log(piece)
         movePieceOnReview(piece, pieceInfo.square, pieceInfo.moves)
     })
 
@@ -129,6 +143,23 @@ const goToFirstRound = () => {
 const goToLastRound = () => {
     const lastRoundIndex = roundsToReview().length - 1
     const lastRound = roundsToReview()[lastRoundIndex]
+    const capturedPiecesReference = roundsToReview().filter(roundInfo => roundInfo.capturedPieces)
+
+    const lastCapturedPieces = capturedPiecesReference
+        ? capturedPiecesReference[capturedPiecesReference.length - 1].capturedPieces
+        : []
+
+    if (lastCapturedPieces && lastCapturedPieces.length) {
+        lastCapturedPieces.forEach(pieceInfo => {
+            const pieceToCaptureColor = pieceInfo.piece.color
+            const pieceToCaptureName = pieceInfo.piece.name
+            const pieceToCapture = getPiecesByColor(pieceToCaptureColor).find(piece => getName(piece) === pieceToCaptureName)
+
+            pieceToCapture.remove()
+            addClass(pieceToCapture, "captured")
+            insertCapturedPieces(pieceToCapture)
+        })
+    }
 
     lastRound.currentPieces.forEach(pieceInfo => {
         const piece = getPieces().find(p => getName(p) === pieceInfo.name && getColor(p) === pieceInfo.color)
@@ -157,9 +188,21 @@ const goToLastRound = () => {
 const goBackRound = () => {
     const index = currentRoundIndex - 1
     const currentRound = roundsToReview()[index]
+    const lastCapturedPieces = roundsToReview()[index + 1].capturedPieces
 
     if (!currentRound) {
         return
+    }
+
+    if (lastCapturedPieces && lastCapturedPieces.some(pieceInfo => pieceInfo.roundPerMove === currentRound.roundPerMove + 1)) {
+        const capturedPieceIndex = lastCapturedPieces.length - 1
+        const capturedPieceColor = lastCapturedPieces[capturedPieceIndex].piece.color
+        const capturedPieceName = lastCapturedPieces[capturedPieceIndex].piece.name
+        const capturedPiece = getCapturedPiecesByColor(capturedPieceColor).find(piece => getName(piece) === capturedPieceName)
+
+        capturedPiece.remove()
+        removeClass(capturedPiece, "captured")
+        board.append(capturedPiece)
     }
 
     currentRound.currentPieces.forEach(pieceInfo => {
@@ -192,9 +235,21 @@ const goBackRound = () => {
 const forwardRound = () => {
     const index = currentRoundIndex + 1
     const currentRound = roundsToReview()[index]
+    const lastCapturedPieces = currentRound.capturedPieces
 
     if (!currentRound) {
         return
+    }
+
+    if (lastCapturedPieces && lastCapturedPieces.some(pieceInfo => pieceInfo.roundPerMove === currentRound.roundPerMove)) {
+        const pieceToCaptureIndex = lastCapturedPieces.length - 1
+        const pieceToCaptureColor = lastCapturedPieces[pieceToCaptureIndex].piece.color
+        const pieceToCaptureName = lastCapturedPieces[pieceToCaptureIndex].piece.name
+        const pieceToCapture = getPiecesByColor(pieceToCaptureColor).find(piece => getName(piece) === pieceToCaptureName)
+
+        pieceToCapture.remove()
+        addClass(pieceToCapture, "captured")
+        insertCapturedPieces(pieceToCapture)
     }
 
     currentRound.currentPieces.forEach(pieceInfo => {
