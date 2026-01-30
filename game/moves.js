@@ -1,7 +1,7 @@
 import { captureScape, checkCheck, moveScape } from "./check.js";
 import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js";
 import Pieces from "./pieces.js";
-import { addClass, board, buttonRestart, buttonUndo, capturedBlackPieces, capturedPieces, capturedWhitePieces, capturePiece, check, checkMate, clearStoragedGame, decrementRound, decrementRoundPerMove, gameHistory, getColor, getCoordinateBySquare, getElement, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, insertCapturedPieces, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetRound, resetRoundPerMove, resetTurn, round, roundPerMove, setCheck, setName, setPassant, setSquare, setStyle, setType, showRoundStatus, squareHasPiece, storageGame, swapTurn, toggleClass, turn } from "./variables.js";
+import { addClass, board, buttonRestart, buttonUndo, capturedBlackPieces, capturedPieces, capturedWhitePieces, capturePiece, check, checkMate, clearStoragedGame, controllersButtons, decrementRound, decrementRoundPerMove, gameHistory, getColor, getCoordinateBySquare, getElement, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getType, hasClass, incrementRound, incrementRoundPerMove, insertCapturedPieces, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetRound, resetRoundPerMove, resetTurn, reviewButton, round, roundPerMove, setCheck, setName, setPassant, setSquare, setStyle, setType, showRoundStatus, squareHasPiece, storageGame, swapTurn, toggleClass, turn } from "./variables.js";
 
 /**
  * Returns an element of a move square representation
@@ -389,6 +389,15 @@ const restartGame = () => {
     resetRoundPerMove()
     resetTurn()
 
+    if (reviewButton()) {
+        reviewButton().remove()
+    }
+
+    if (controllersButtons() && controllersButtons().length) {
+        controllersButtons().forEach(button => button.remove())
+    }
+
+    buttonUndo.setAttribute("disabled", true)
     clearStoragedGame()
     Pieces()
     Moves()

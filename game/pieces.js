@@ -1,4 +1,5 @@
 import { setPiecesCheck } from "./check.js"
+import ShowReviewButton from "./review-game.js"
 import { addClass, board, buttonUndo, capturedPieces, defeatedIcon, endGame, gameHistory, getColor, getCoordinateBySquare, getPieces, getSquare, getType, insertCapturedPieces, opponent, setCheck, setColor, setMove, setName, setRound, setRoundPerMove, setSquare, setStyle, setTurn, setType, showRoundStatus, storagedGame, turn, winnerIcon } from "./variables.js"
 
 /**
@@ -85,31 +86,6 @@ const initialSquare = (color, pieceName) => {
 }
 
 /**
- * Returns the HTML element of a piece
- * @param {string} pieceName 
- * @param {string} color 
- * @returns {HTMLElement}
- */
-const pieceElement = (pieceName, color) => {
-    let element = document.createElement("i")
-    let pieceType = pieceName !== "queen" && pieceName !== "king" ? pieceName.substring(0, pieceName.length - 1) : pieceName
-    let square = initialSquare(color, pieceName)
-    let { top, left } = getCoordinateBySquare(square)
-
-    element.className = `fa-solid fa-chess-${pieceType} piece ${color}`
-    setType(element, pieceType)
-    setName(element, pieceName)
-    setColor(element, color)
-    setSquare(element, square)
-    setMove(element, 0)
-
-    setStyle(element, "top", `${top}px`)
-    setStyle(element, "left", `${left}px`)
-
-    return element
-}
-
-/**
  * Returns the HTML element of an existing piece from browser local storage
  * @param {string} name 
  * @param {string} color 
@@ -128,6 +104,31 @@ const existingPieceElement = (name, color, type, square, moves) => {
     setColor(element, color)
     setSquare(element, square)
     setMove(element, moves)
+
+    setStyle(element, "top", `${top}px`)
+    setStyle(element, "left", `${left}px`)
+
+    return element
+}
+
+/**
+ * Returns the HTML element of a piece
+ * @param {string} pieceName 
+ * @param {string} color 
+ * @returns {HTMLElement}
+ */
+export const pieceElement = (pieceName, color) => {
+    let element = document.createElement("i")
+    let pieceType = pieceName !== "queen" && pieceName !== "king" ? pieceName.substring(0, pieceName.length - 1) : pieceName
+    let square = initialSquare(color, pieceName)
+    let { top, left } = getCoordinateBySquare(square)
+
+    element.className = `fa-solid fa-chess-${pieceType} piece ${color}`
+    setType(element, pieceType)
+    setName(element, pieceName)
+    setColor(element, color)
+    setSquare(element, square)
+    setMove(element, 0)
 
     setStyle(element, "top", `${top}px`)
     setStyle(element, "left", `${left}px`)
@@ -204,8 +205,9 @@ export default function Pieces() {
                 board.append(defeatedIcon(getSquare(kingInCheck)))
                 getPieces().forEach(piece => addClass(piece, "afterEndGame"))
                 addClass(buttonUndo, "hidden")
-                
+
                 endGame()
+                ShowReviewButton()
             }
 
             showRoundStatus(

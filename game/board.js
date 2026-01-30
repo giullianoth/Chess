@@ -1,4 +1,4 @@
-import { board, columns, indicatorColumns, indicatorRanks, isEven, isOdd, ranks, setSquare } from "./variables.js"
+import { board, buttonRotate, columns, indicatorColumns, indicatorRanks, isEven, isOdd, ranks, setSquare, toggleClass } from "./variables.js"
 
 /**
  * Returns an HTML element of a square
@@ -28,4 +28,6 @@ export default function Board() {
 
         columns.forEach((column, columnIndex) => board.append(squareElement(column + rank, columnIndex, rankIndex)))
     })
+
+    buttonRotate.addEventListener("click", () => toggleClass(board, "spinned"))
 }

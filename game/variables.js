@@ -145,6 +145,16 @@ export const capturedWhitePieces = getElement("div.white", capturedArea)
  */
 export const capturedBlackPieces = getElement("div.black", capturedArea)
 
+/**
+ * The button to spin the board
+ */
+export const buttonRotate = getElement(".rotate")
+
+/**
+ * The area of the controller buttons and the undo button
+ */
+export const controllersArea = getElement(".controllers")
+
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // SQUARES
@@ -300,6 +310,11 @@ export const getPieceBySquare = square => getPieces().find(piece => getSquare(pi
  */
 export const capturedPieces = []
 
+/**
+ * The pieces list of each player
+ */
+export const piecesList = ["pawn1", "pawn2", "pawn3", "pawn4", "pawn5", "pawn6", "pawn7", "pawn8", "rook1", "rook2", "knight1", "knight2", "bishop1", "bishop2", "queen", "king"]
+
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // ACTIONS
@@ -317,6 +332,7 @@ export const buttonRestart = getElement(".restart")
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // GAME FEATURES
+
 const gameKey = "chess-game"
 
 /**
@@ -651,7 +667,7 @@ export const defeatedIcon = square => {
     const icon = "<i class=\"fa-solid fa-hashtag\"></i>"
     const { top, left } = getCoordinateBySquare(square)
 
-    element.className = "defeated"
+    element.className = "endGameIcon defeated"
     element.innerHTML = icon
     setStyle(element, "top", `${top}px`)
     setStyle(element, "left", `${left}px`)
@@ -669,13 +685,15 @@ export const winnerIcon = square => {
     const icon = "<i class=\"fa-solid fa-crown\"></i>"
     const { top, left } = getCoordinateBySquare(square)
 
-    element.className = "winner"
+    element.className = "endGameIcon winner"
     element.innerHTML = icon
     setStyle(element, "top", `${top}px`)
     setStyle(element, "left", `${left}px`)
 
     return element
 }
+
+export const endGameIcons = () => getElements(".endGameIcon")
 
 /**
  * Shows in browser console the status of the current round
@@ -704,4 +722,77 @@ export const showRoundStatus = (color, promoted, piece, capturedPiece, squareOri
         check && !checkMate ? "\nCheck" : "",
         checkMate ? "\nCheckmate" : ""
     )
+}
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// GAME REVIEW
+
+/**
+ * Element of game review button
+ * @returns {HTMLButtonElement}
+ */
+export const reviewButtonElement = () => {
+    const element = document.createElement("button")
+    element.className = "review"
+    element.innerText = "Rever jogo"
+    return element
+}
+
+/**
+ * Element of a controller review button
+ * @param {string} className 
+ * @param {string} title 
+ * @param {string} iconName 
+ * @returns {HTMLButtonElement}
+ */
+export const reviewControllersElement = (className, title, iconName) => {
+    const element = document.createElement("button")
+    const icon = document.createElement("i")
+    element.className = className
+    element.setAttribute("title", title)
+    icon.className = `fa-solid fa-${iconName}`
+    element.append(icon)
+    return element
+}
+
+/**
+ * The game review button
+ * @returns {HTMLButtonElement | undefined}
+ */
+export const reviewButton = () => getElement(".review")
+
+/**
+ * All controller buttons of game review
+ * @returns {HTMLButtonElement[] | undefined}
+ */
+export const controllersButtons = () => getElements(".controller")
+
+/**
+ * The button that goes to first round on game review
+ * @returns {HTMLButtonElement | undefined}
+ */
+export const firstRoundButton = () => getElement(".controller.first")
+
+/**
+ * The button that goes to last round on game review
+ * @returns {HTMLButtonElement | undefined}
+ */
+export const lastRoundButton = () => getElement(".controller.last")
+
+/**
+ * The button that goes back a round on game review
+ * @returns {HTMLButtonElement | undefined}
+ */
+export const backwardsRoundButton = () => getElement(".controller.backwards")
+
+/**
+ * The button that advances a round on game review
+ * @returns {HTMLButtonElement | undefined}
+ */
+export const forwardsRoundButton = () => getElement(".controller.forwards")
+
+export const movePieceOnReview = (piece, square, pieceMove) => {
+    movePiece(piece, square)
+    setMove(piece, pieceMove)
 }

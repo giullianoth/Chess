@@ -2,6 +2,7 @@ import { getAvailableCaptures, getAvailableMoves } from "./getAvailableMoves.js"
 import { bishopLine, bishopPin } from "./pieceMoves/bishop.js"
 import { queenLine, queenPin } from "./pieceMoves/queen.js"
 import { rookLine, rookPin } from "./pieceMoves/rook.js"
+import ShowReviewButton from "./review-game.js"
 import { addClass, board, buttonUndo, defeatedIcon, endGame, getColor, getPieces, getPiecesByColor, getSquare, getType, opponent, piecesCheck, setCheck, winnerIcon } from "./variables.js"
 
 /**
@@ -40,6 +41,7 @@ export const checkCheck = () => {
             endGame()
 
             addClass(buttonUndo, "hidden")
+            ShowReviewButton()
         }
     }
 }
