@@ -280,7 +280,7 @@ export const setColor = (element, color) => element.setAttribute("data-color", c
 /**
  * Sets the move in a HTML data attribute of an element
  * @param {HTMLElement} element 
- * @param {string} color 
+ * @param {number} move 
  * @returns {void}
  */
 export const setMove = (element, move) => element.setAttribute("data-move", move)
@@ -288,7 +288,7 @@ export const setMove = (element, move) => element.setAttribute("data-move", move
 /**
  * Sets the piece name in a HTML data attribute of an element
  * @param {HTMLElement} element 
- * @param {string} color 
+ * @param {string} name 
  * @returns {void}
  */
 export const setName = (element, name) => element.setAttribute("data-name", name)
@@ -296,7 +296,7 @@ export const setName = (element, name) => element.setAttribute("data-name", name
 /**
  * Sets the piece type in a HTML data attribute of an element
  * @param {HTMLElement} element 
- * @param {string} color 
+ * @param {string} type 
  * @returns {void}
  */
 export const setType = (element, type) => element.setAttribute("data-type", type)
