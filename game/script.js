@@ -6,6 +6,4 @@ Board()
 Pieces()
 Moves()
 
-window.addEventListener("resize", () => {
-    setBoardDimensions()
-})
+window.addEventListener("resize", () => setBoardDimensions())
