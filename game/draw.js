@@ -1,6 +1,6 @@
 import { getAvailableCaptures, getAvailableMoves } from "./available-moves.js"
 import ShowReviewButton from "./review.js"
-import { addClass, arrayFiftyMovesLimit, arrayRepetitionLimit, board, buttonUndo, checkMate, draw, drawAfterFiftyMoves, drawByRepetition, drawIcon, endGameByDraw, fiftyMovesCount, gameHistory, getPieces, getPiecesByColor, getSquare, getSquaresFromBoard, getType, incrementRepetitionIndex, lastRound, repetitionCount, repetitionIndex, resetFiftyMovesCount, resetRepetitionCount, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setStaleMate, storageGame } from "./variables.js"
+import { addClass, arrayFiftyMovesLimit, arrayRepetitionLimit, board, buttonUndo, checkMate, draw, drawAfterFiftyMoves, drawByRepetition, drawIcon, endGameByDraw, fiftyMovesCount, gameHistory, getPieces, getPiecesByColor, getSquare, getSquareFromBoard, getType, incrementRepetitionIndex, lastRound, repetitionCount, repetitionIndex, resetFiftyMovesCount, resetRepetitionCount, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setStaleMate, storageGame } from "./variables.js"
 
 export const checkStalemate = () => {
     if (checkMate) {
@@ -116,17 +116,8 @@ export const checkLackOfMaterial = () => {
         const whiteBishop = whitePieces.find(piece => getType(piece) === "bishop")
         const blackBishop = blackPieces.find(piece => getType(piece) === "bishop")
 
-        const whiteBishopSquares = Array.from(
-            getSquaresFromBoard()
-                .find(square => getSquare(square) === getSquare(whiteBishop))
-                .classList
-        )[1]
-
-        const blackBishopSquares = Array.from(
-            getSquaresFromBoard()
-                .find(square => getSquare(square) === getSquare(blackBishop))
-                .classList
-        )[1]
+        const whiteBishopSquares = Array.from(getSquareFromBoard(getSquare(whitebishop)).classList)[1]
+        const blackBishopSquares = Array.from(getSquareFromBoard(getSquare(blackbishop)).classList)[1]
 
         return whiteBishopSquares === blackBishopSquares
     }
