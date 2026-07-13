@@ -83,9 +83,9 @@ body {
 }
 
 .board.spinned .capturedPieces {
-    top: unset;
+    bottom: unset;
     left: unset;
-    bottom: -40px;
+    top: calc(100% + 15px);
     right: 0;
 }
 
@@ -118,7 +118,7 @@ body {
 
 .capturedPieces {
     position: absolute;
-    bottom: calc(100% + 25px);
+    bottom: calc(100% + 15px);
     left: 0;
     width: 100%;
     display: flex;
@@ -347,6 +347,10 @@ body {
 
     .board.spinned .indicator.columns {
         top: -40px;
+    }
+
+    .board.spinned .capturedPieces {
+        top: calc(100% + 25px);
     }
 
     .indicator.columns {
