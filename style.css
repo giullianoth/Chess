@@ -118,7 +118,7 @@ body {
 
 .capturedPieces {
     position: absolute;
-    top: -30px;
+    bottom: calc(100% + 30px);
     left: 0;
     width: 100%;
     display: flex;
@@ -363,7 +363,7 @@ body {
     }
 
     .capturedPieces {
-        top: -40px;
+        bottom: calc(100% + 40px);
     }
 
     .actions {
