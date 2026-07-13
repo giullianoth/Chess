@@ -130,7 +130,7 @@ body {
 .capturedPieces div.black {
     flex-basis: 50%;
     display: flex;
-    column-gap: 4px;
+    gap: 4px;
     flex-wrap: wrap-reverse;
 }
 
