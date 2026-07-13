@@ -131,6 +131,7 @@ body {
     flex-basis: 50%;
     display: flex;
     column-gap: 4px;
+    flex-wrap: wrap;
 }
 
 .capturedPieces div.black {
