@@ -89,6 +89,11 @@ body {
     right: 0;
 }
 
+.board.spinned .capturedPieces div.white,
+.board.spinned .capturedPieces div.black {
+    flex-wrap: wrap;
+}
+
 .indicator {
     position: absolute;
     display: grid;
