@@ -1,6 +1,6 @@
 import { setPiecesCheck } from "./check.js"
 import ShowReviewButton from "./review.js"
-import { addClass, board, buttonUndo, defeatedIcon, drawIcon, endGameByCheckMate, endGameByDraw, gameHistory, getCapturedPiecesByColor, getColor, getCoordinateBySquare, getName, getPieces, getPiecesByColor, getSquare, getType, hasClass, insertCapturedPieces, opponent, removeClass, setCheck, setColor, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setMove, setName, setPassant, setRound, setRoundPerMove, setSquare, setStaleMate, setStyle, setTurn, setType, showRoundStatus, storagedGame, winnerIcon } from "./variables.js"
+import { addClass, board, buttonUndo, clearStoragedGame, defeatedIcon, drawIcon, endGameByCheckMate, endGameByDraw, gameHistory, getCapturedPiecesByColor, getColor, getCoordinateBySquare, getName, getPieces, getPiecesByColor, getSquare, getType, hasClass, insertCapturedPieces, opponent, removeClass, setCheck, setColor, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setMove, setName, setPassant, setRound, setRoundPerMove, setSquare, setStaleMate, setStyle, setTurn, setType, showRoundStatus, storagedGame, winnerIcon } from "./variables.js"
 
 /**
  * The pieces list of each player
@@ -265,10 +265,12 @@ export const pieceElement = (pieceName, color) => {
 }
 
 export default function Pieces() {
-    if (storagedGame() && storagedGame().length) {
-        arrangeExistingPieces(storagedGame())
-        return
-    }
+    // if (storagedGame() && storagedGame().length) {
+    //     arrangeExistingPieces(storagedGame())
+    //     return
+    // }
+
+    clearStoragedGame()
 
     piecesList.forEach(pieceName => {
         board.append(pieceElement(pieceName, "white"))
