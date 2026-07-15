@@ -94,6 +94,10 @@ body {
     flex-wrap: wrap;
 }
 
+.board.spinned .promotionPieces {
+    flex-direction: row-reverse;
+}
+
 .indicator {
     position: absolute;
     display: grid;
