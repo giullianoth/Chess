@@ -106,7 +106,7 @@ const movement = (piece, squareTarget, promoted = false) => {
 
     if (hasClass(squareTarget, "capture") && squareHasPiece(squareDestination)) {
         pieceToCapture = getPieceBySquare(squareDestination)
-        capturePiece(pieceToCapture, roundPerMove)
+        capturePiece(pieceToCapture)
     }
 
     if (isCastle(piece, squareDestination)) {
@@ -122,7 +122,7 @@ const movement = (piece, squareTarget, promoted = false) => {
 
     if (isPassant) {
         pieceToCapture = getPieceBySquare(lastRound().squareDestination)
-        capturePiece(pieceToCapture, roundPerMove)
+        capturePiece(pieceToCapture)
         setPassant(false)
         passant = true
     }

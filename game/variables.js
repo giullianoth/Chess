@@ -408,9 +408,8 @@ export const movePiece = (piece, square, undoneMove = false) => {
 /**
  * Removes a captured piece from board
  * @param {HTMLElement} piece 
- * @param {number} currentRoundPerMove
  */
-export const capturePiece = (piece, currentRoundPerMove) => {
+export const capturePiece = (piece) => {
     addClass(piece, "captured")
     const pieceClone = piece.cloneNode(true)
     insertCapturedPieces(pieceClone)
