@@ -1,4 +1,4 @@
-import { board, boardDimension, buttonRotate, columns, endGameIcons, getCoordinateBySquare, getPieces, getSquare, indicatorColumns, indicatorRanks, isEven, isOdd, ranks, setSquare, setStyle, squareDimension, toggleClass } from "./variables.js"
+import { board, boardDimension, buttonRotate, columns, endGameIcons, getCoordinateBySquare, getMoveSquares, getPieces, getSquare, indicatorColumns, indicatorRanks, isEven, isOdd, ranks, setSquare, setStyle, squareDimension, toggleClass } from "./variables.js"
 
 /**
  * Returns an HTML element of a square
@@ -37,6 +37,16 @@ export const setBoardDimensions = () => {
         setStyle(piece, "top", `${top}px`)
         setStyle(piece, "left", `${left}px`)
     })
+
+    if (getMoveSquares() && getMoveSquares().length) {
+        getMoveSquares().forEach(moveSquare => {
+            let square = getSquare(moveSquare)
+            let { top, left } = getCoordinateBySquare(square)
+
+            setStyle(icon, "top", `${top}px`)
+            setStyle(icon, "left", `${left}px`)
+        })
+    }
 
     if (endGameIcons() && endGameIcons().length) {
         endGameIcons().forEach(icon => {
