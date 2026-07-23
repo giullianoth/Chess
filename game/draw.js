@@ -1,6 +1,6 @@
 import { getAvailableCaptures, getAvailableMoves } from "./available-moves.js"
 import ShowReviewButton from "./review.js"
-import { addClass, arrayFiftyMovesLimit, arrayRepetitionLimit, board, buttonUndo, checkMate, draw, drawAfterFiftyMoves, drawByRepetition, drawIcon, endGameByDraw, fiftyMovesCount, gameHistory, getPieces, getPiecesByColor, getSquare, getSquareFromBoard, getType, incrementRepetitionIndex, lastRound, repetitionCount, repetitionIndex, resetFiftyMovesCount, resetRepetitionCount, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setStaleMate, storageGame } from "./variables.js"
+import { addClass, arrayFiftyMovesLimit, board, buttonUndo, checkMate, draw, drawAfterFiftyMoves, drawByRepetition, drawIcon, endGameByDraw, fiftyMovesCount, gameHistory, getColor, getName, getPieces, getPiecesByColor, getSquare, getSquareFromBoard, getType, lastRound, repetitionLimit, resetFiftyMovesCount, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setStaleMate, storageGame } from "./variables.js"
 
 export const checkStalemate = () => {
     if (checkMate) {
@@ -28,33 +28,32 @@ export const checkStalemate = () => {
 }
 
 export const checkRepetition = () => {
-    const lastPiece = lastRound().piece
-    const squareDestination = lastRound().squareDestination
-    const squareOrigin = lastRound().squareOrigin
-
-    repetitionCount.push({
-        piece: lastPiece,
-        squareDestination,
-        squareOrigin,
-    })
-
-    if (repetitionIndex >= 2) {
-        const currentRepetitionInfo = repetitionCount[repetitionIndex]
-        const repetitionInfoToCompare = repetitionCount[repetitionIndex - 2]
-
-        if (
-            currentRepetitionInfo.piece.name !== repetitionInfoToCompare.piece.name ||
-            currentRepetitionInfo.piece.color !== repetitionInfoToCompare.piece.color ||
-            currentRepetitionInfo.squareDestination !== repetitionInfoToCompare.squareOrigin
-        ) {
-            resetRepetitionCount()
-            return
-        }
+    if (!gameHistory.length) {
+        return
     }
 
-    incrementRepetitionIndex()
+    let repeatedPositions = []
 
-    if (repetitionIndex === arrayRepetitionLimit) {
+    const lastPositions = gameHistory.map(info => info.currentPieces.map(piece => ({
+        name: piece.name,
+        color: piece.color,
+        square: piece.square,
+    }))).slice(0, gameHistory.length - 1)
+
+    lastPositions.forEach((infoPosition, i, arr) => {
+        const positionInfo = arr.filter(pos => pos.every(pL => infoPosition.some(pI =>
+            pI.name === pL.name &&
+            pI.color === pL.color &&
+            pI.square === pL.square)))
+
+        console.log(positionInfo)
+
+        if (positionInfo.length === repetitionLimit) {
+            repeatedPositions = positionInfo
+        }
+    })
+
+    if (repeatedPositions.length === repetitionLimit) {
         const kings = getPieces().filter(piece => getType(piece) === "king")
 
         kings.forEach(king => {
@@ -123,10 +122,10 @@ export const checkLackOfMaterial = () => {
     }
 
     if (
-        thereAreOnlyKings
-        || thereAreOnlyKingAndKight
-        || thereAreOnlyKingAndBishop
-        || thereAreOnlyKingAndBishops()
+        thereAreOnlyKings ||
+        thereAreOnlyKingAndKight ||
+        thereAreOnlyKingAndBishop ||
+        thereAreOnlyKingAndBishops()
     ) {
         const kings = getPieces().filter(piece => getType(piece) === "king")
 

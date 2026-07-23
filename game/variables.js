@@ -727,33 +727,9 @@ export const gameHistory = []
 export const lastRound = (index = roundPerMove) => gameHistory[index - 2]
 
 /**
- * Accumulation of pieces rounds to verify repetition
+ * The limit of repetitions in the game
  */
-export const repetitionCount = []
-
-/**
- * The limit of repetitions in the accumulator array, it's a representation of the real limit that is 3
- */
-export const arrayRepetitionLimit = 10
-
-/**
- * The index for repetition accumulator
- */
-export var repetitionIndex = 0
-
-/**
- * Increments the index of repetition accumulator
- * @returns {void}
- */
-export const incrementRepetitionIndex = () => repetitionIndex += 1
-
-/**
- * Resets the repetition accumulator
- */
-export const resetRepetitionCount = () => {
-    repetitionCount.length = 0
-    repetitionIndex = 0
-}
+export const repetitionLimit = 3
 
 /**
  * Accumulation of moves to verify the draw after fifty moves rule
@@ -763,7 +739,7 @@ export const fiftyMovesCount = []
 /**
  * The limit of fifty moves in the accumulator array, it's a representation of the real limit that is 50
  */
-export const arrayFiftyMovesLimit = 100
+export const arrayFiftyMovesLimit = 4
 
 /**
  * Increments the index of fifty moves accumulator

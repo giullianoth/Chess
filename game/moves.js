@@ -2,7 +2,7 @@ import { getAvailableCaptures, getAvailableMoves } from "./available-moves.js"
 import { captureScape, checkCheck, moveScape, setPiecesCheck } from "./check.js"
 import { checkFiftyMoves, checkLackOfMaterial, checkRepetition, checkStalemate } from "./draw.js"
 import Pieces from "./pieces.js"
-import { addClass, board, buttonRestart, buttonUndo, capturedBlackPiecesArea, capturedWhitePiecesArea, capturePiece, check, checkMate, clearStoragedGame, controllerButtons, decrementRound, decrementRoundPerMove, draw, drawByLackOfMaterial, drawByRepetition, gameHistory, getCapturedPieces, getColor, getCoordinateBySquare, getElement, getElements, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getSquareFromBoard, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, opponent, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetDraw, resetRepetitionCount, resetRound, resetRoundPerMove, resetTurn, reviewButton, round, roundPerMove, setCheck, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setName, setPassant, setSquare, setStaleMate, setStyle, setType, showRoundStatus, squareHasPiece, staleMate, storageGame, swapTurn, toggleClass, turn } from "./variables.js"
+import { addClass, board, buttonRestart, buttonUndo, capturedBlackPiecesArea, capturedWhitePiecesArea, capturePiece, check, checkMate, clearStoragedGame, controllerButtons, decrementRound, decrementRoundPerMove, draw, drawByLackOfMaterial, drawByRepetition, gameHistory, getCapturedPieces, getColor, getCoordinateBySquare, getElement, getElements, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getSquareFromBoard, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, opponent, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetDraw, resetRound, resetRoundPerMove, resetTurn, reviewButton, round, roundPerMove, setCheck, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setName, setPassant, setSquare, setStaleMate, setStyle, setType, showRoundStatus, squareHasPiece, staleMate, storageGame, swapTurn, toggleClass, turn } from "./variables.js"
 
 /**
  * Returns an element of a move square representation
@@ -407,7 +407,6 @@ const restartGame = () => {
     setDrawByRepetition(false)
     setDrawByLackOfMaterial(false)
     setDrawAfterFiftyMoves(false)
-    resetRepetitionCount()
     resetCheckMate()
     resetDraw()
     resetRound()
