@@ -46,8 +46,6 @@ export const checkRepetition = () => {
             pI.color === pL.color &&
             pI.square === pL.square)))
 
-        console.log(positionInfo)
-
         if (positionInfo.length === repetitionLimit) {
             repeatedPositions = positionInfo
         }
