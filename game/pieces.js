@@ -1,4 +1,5 @@
 import { setPiecesCheck } from "./check.js"
+import { ChooseGameMode } from "./game-mode.js"
 import ShowReviewButton from "./review.js"
 import { addClass, board, buttonUndo, defeatedIcon, drawIcon, endGameByCheckMate, endGameByDraw, gameHistory, getCapturedPiecesByColor, getColor, getCoordinateBySquare, getName, getPieces, getPiecesByColor, getSquare, getType, hasClass, insertCapturedPieces, opponent, removeClass, setCheck, setColor, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setMove, setName, setPassant, setRound, setRoundPerMove, setSquare, setStaleMate, setStyle, setTurn, setType, showRoundStatus, storagedGame, winnerIcon } from "./variables.js"
 
@@ -6,7 +7,6 @@ import { addClass, board, buttonUndo, defeatedIcon, drawIcon, endGameByCheckMate
  * The pieces list of each player
  */
 export const piecesList = ["pawn1", "pawn2", "pawn3", "pawn4", "pawn5", "pawn6", "pawn7", "pawn8", "rook1", "rook2", "knight1", "knight2", "bishop1", "bishop2", "queen", "king"]
-// export const piecesList = ["pawn2", "bishop1", "king"]
 
 /**
  * Returns the initial square of every piece
@@ -274,4 +274,6 @@ export default function Pieces() {
         board.append(pieceElement(pieceName, "white"))
         board.append(pieceElement(pieceName, "black"))
     })
+
+    ChooseGameMode()
 }

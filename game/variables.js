@@ -95,6 +95,29 @@ export const isOdd = (num) => !isEven(num)
  */
 export const capitalized = text => text.charAt(0).toUpperCase() + text.slice(1)
 
+/**
+ * Gets a random item from a specified array
+ * @param {any[]} arr 
+ * @returns {any}
+ */
+export const getRandomItemFromArray = arr => arr[Math.floor(Math.random() * arr.length)]
+
+// ------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// SOME ELEMENTS
+
+/**
+ * The modal element
+ * @returns {HTMLElement | undefined}
+ */
+export const modal = () => getElement(".modal")
+
+/**
+ * The content area of the modal
+ * @returns {HTMLElement | undefined}
+ */
+export const modalBody = () => getElement(".modal .modal-body")
+
 // ------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 // BOARD
@@ -341,6 +364,18 @@ export const getPieceMove = element => parseInt(element.dataset.move)
 // GAME FEATURES
 
 /**
+ * The mode of opponent to play against
+ */
+export var playingAgainst = ""
+
+/**
+ * Sets the type of opponent for game (bot or player)
+ * @param {string} mode 
+ * @returns 
+ */
+export const setPlayingAgainst = mode => playingAgainst = mode
+
+/**
  * The current turn of the game
  */
 export var turn = "white"
@@ -370,6 +405,24 @@ export const resetTurn = () => turn = "white"
  * @returns {string}
  */
 export const opponent = (color = turn) => color === "white" ? "black" : "white"
+
+/**
+ * The color choosen by player
+ */
+export var playerColor = ""
+
+/**
+ * The color of bot by choosen player color
+ * @returns {string}
+ */
+export const botColor = () => playerColor === "black" || playerColor === "white" ? opponent(playerColor) : ""
+
+/**
+ * Defines the choosen color by player
+ * @param {string} color 
+ * @returns {void}
+ */
+export const setPlayerColor = color => playerColor = color
 
 /**
  * Verification if capture en passant is valid
@@ -724,7 +777,7 @@ export const gameHistory = []
  *  }[]
  * }}
  */
-export const lastRound = (index = roundPerMove) => gameHistory[index - 2]
+export const lastRound = (index = roundPerMove - 2) => gameHistory[index]
 
 /**
  * The limit of repetitions in the game
@@ -739,7 +792,7 @@ export const fiftyMovesCount = []
 /**
  * The limit of fifty moves in the accumulator array, it's a representation of the real limit that is 50
  */
-export const arrayFiftyMovesLimit = 4
+export const arrayFiftyMovesLimit = 100
 
 /**
  * Increments the index of fifty moves accumulator
@@ -772,11 +825,13 @@ export const showRoundStatus = (color, promoted, piece, capturedPiece, squareOri
         + capitalized(getType(piece))
         + (capturedPiece ? ` x ${capitalized(getType(capturedPiece))}` : "")
 
-    const drawCondition = "\n** DRAW"
-        + (staleMate ? " BY STALEMATE" : "")
-        + (drawByRepetition ? " BY REPETITION" : "")
-        + (drawByLackOfMaterial ? " BY LACK OF MATERIAL" : "")
-        + (drawAfterFiftyMoves ? " AFTER FIFTY MOVES" : "")
+    const drawCondition = "** "
+        + (staleMate
+            ? "STALEMATE"
+            : "DRAW"
+            + (drawByRepetition ? " BY REPETITION" : "")
+            + (drawByLackOfMaterial ? " BY LACK OF MATERIAL" : "")
+            + (drawAfterFiftyMoves ? " AFTER FIFTY MOVES" : ""))
         + " **"
 
     console.log(

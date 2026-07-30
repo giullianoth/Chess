@@ -2,7 +2,7 @@ import { getAvailableCaptures, getAvailableMoves } from "./available-moves.js"
 import { captureScape, checkCheck, moveScape, setPiecesCheck } from "./check.js"
 import { checkFiftyMoves, checkLackOfMaterial, checkRepetition, checkStalemate } from "./draw.js"
 import Pieces from "./pieces.js"
-import { addClass, board, buttonRestart, buttonUndo, capturedBlackPiecesArea, capturedWhitePiecesArea, capturePiece, check, checkMate, clearStoragedGame, controllerButtons, decrementRound, decrementRoundPerMove, draw, drawByLackOfMaterial, drawByRepetition, gameHistory, getCapturedPieces, getColor, getCoordinateBySquare, getElement, getElements, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getSquare, getSquareFromBoard, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, opponent, piecesCheck, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetDraw, resetRound, resetRoundPerMove, resetTurn, reviewButton, round, roundPerMove, setCheck, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setName, setPassant, setSquare, setStaleMate, setStyle, setType, showRoundStatus, squareHasPiece, staleMate, storageGame, swapTurn, toggleClass, turn } from "./variables.js"
+import { addClass, board, botColor, buttonRestart, buttonUndo, capturedBlackPiecesArea, capturedWhitePiecesArea, capturePiece, check, checkMate, clearStoragedGame, controllerButtons, decrementRound, decrementRoundPerMove, draw, drawByLackOfMaterial, drawByRepetition, gameHistory, getCapturedPieces, getColor, getCoordinateBySquare, getElement, getElements, getMoveSquares, getName, getPieceBySquare, getPieceMove, getPieces, getPiecesByColor, getRandomItemFromArray, getSquare, getSquareFromBoard, getType, hasClass, incrementRound, incrementRoundPerMove, isCastle, isFirstMove, isPassant, isPromotion, lastRound, movePiece, opponent, piecesCheck, playerColor, playingAgainst, promotionList, promotionOptions, removeClass, replaceClass, resetCheckMate, resetDraw, resetRound, resetRoundPerMove, resetTurn, reviewButton, round, roundPerMove, setCheck, setDrawAfterFiftyMoves, setDrawByLackOfMaterial, setDrawByRepetition, setName, setPassant, setSquare, setStaleMate, setStyle, setType, showRoundStatus, squareHasPiece, staleMate, storageGame, swapTurn, toggleClass, turn } from "./variables.js"
 
 /**
  * Returns an element of a move square representation
@@ -178,7 +178,7 @@ const movement = (piece, squareTarget, promoted = false) => {
     currentGameInfo.staleMate = staleMate
     currentGameInfo.drawByLackOfMaterial = drawByLackOfMaterial
     gameHistory.push(currentGameInfo)
-    
+
     checkRepetition()
     checkFiftyMoves()
 
@@ -200,6 +200,16 @@ const movement = (piece, squareTarget, promoted = false) => {
     )
 
     storageGame()
+
+    if (playingAgainst === "bot" && botColor() === turn) {
+        botMovement()
+    }
+
+    if (playingAgainst === "player") {
+        setTimeout(() => {
+            turn === "white" ? removeClass(board, "spinned") : addClass(board, "spinned")
+        }, 300)
+    }
 }
 
 /**
@@ -220,6 +230,51 @@ const promotion = (piece, squareTarget) => {
             movement(piece, squareTarget, true)
         })
     })
+}
+
+/**
+ * Defines the movement of a piece by the bot
+ */
+export const botMovement = () => {
+    if (checkMate || draw || playingAgainst !== "bot") {
+        return
+    }
+
+    const validSquares = pieceReference => {
+        const moveSquares = check ? moveScape(pieceReference) : getAvailableMoves(pieceReference)
+        const captureSquares = check ? captureScape(pieceReference) : getAvailableCaptures(pieceReference)
+        return moveSquares.concat(captureSquares)
+    }
+
+    const botPieces = getPiecesByColor(botColor())
+    let randomPiece = getRandomItemFromArray(botPieces)
+    let squaresToMove = validSquares(randomPiece)
+
+    while (!squaresToMove.length) {
+        randomPiece = getRandomItemFromArray(botPieces)
+        squaresToMove = validSquares(randomPiece)
+    }
+
+    const randomSquare = getRandomItemFromArray(squaresToMove)
+
+    const squareMoveElement = squareHasPiece(randomSquare)
+        ? captureElement(randomSquare)
+        : moveElement(randomSquare)
+
+    setTimeout(() => {
+        let promoted = false
+
+        if (isPromotion(randomPiece, randomSquare)) {
+            const piecesToPromote = ["knight", "bishop", "rook", "queen"]
+            const randomPieceToPromote = getRandomItemFromArray(piecesToPromote)
+            replaceClass(randomPiece, "fa-chess-pawn", `fa-chess-${randomPieceToPromote}`)
+            setType(randomPiece, randomPieceToPromote)
+            setName(randomPiece, `${getName(randomPiece)}-promoted-to-${randomPieceToPromote}`)
+            promoted = true
+        }
+
+        movement(randomPiece, squareMoveElement, promoted)
+    }, 1000)
 }
 
 /**
@@ -430,19 +485,28 @@ export default function Moves() {
     getPieces().forEach(piece => {
         piece.addEventListener("mouseenter", ({ target }) => {
             if (getColor(target) === turn) {
-                selectPiece(target)
+                if (playingAgainst === "player"
+                    || (playingAgainst === "bot" && playerColor === turn)) {
+                    selectPiece(target)
+                }
             }
         })
 
         piece.addEventListener("click", ({ target }) => {
             if (getColor(target) === turn) {
-                defineMove(target)
+                if (playingAgainst === "player"
+                    || (playingAgainst === "bot" && playerColor === turn)) {
+                    defineMove(target)
+                }
             }
         })
 
         piece.addEventListener("mouseleave", ({ target }) => {
             if (getColor(target) === turn) {
-                disselectPiece(target)
+                if (playingAgainst === "player"
+                    || (playingAgainst === "bot" && playerColor === turn)) {
+                    disselectPiece(target)
+                }
             }
         })
     })
