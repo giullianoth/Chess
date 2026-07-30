@@ -67,7 +67,7 @@ export const checkRepetition = () => {
         ShowReviewButton()
     }
 
-    const currentRound = gameHistory[gameHistory.length - 1]
+    const currentRound = lastRound(gameHistory.length - 1)
 
     const updatedGameHistory = gameHistory.map(info => info.roundPerMove === currentRound.roundPerMove
         ? { ...info, draw, drawByRepetition }
@@ -168,7 +168,7 @@ export const checkFiftyMoves = () => {
         ShowReviewButton()
     }
 
-    const currentRound = gameHistory[gameHistory.length - 1]
+    const currentRound = lastRound(gameHistory.length - 1)
 
     const updatedGameHistory = gameHistory.map(info => info.roundPerMove === currentRound.roundPerMove
         ? { ...info, draw, drawAfterFiftyMoves }
